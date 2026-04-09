@@ -91,7 +91,7 @@ const FormsData = () => {
             </svg>
             Export All
           </button>
-          <button className="inline-flex items-center px-4 py-2 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 premium-shadow transform hover:scale-105">
+          <button className="inline-flex items-center px-4 py-2 bg-linear-to-r from-sky-600 to-blue-700 text-white rounded-xl text-sm font-medium hover:from-sky-700 hover:to-blue-800 transition-all duration-200 premium-shadow transform hover:scale-105">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -121,13 +121,13 @@ const FormsData = () => {
         </div>
 
         {/* Active Tab Info */}
-        <div className="bg-linear-to-r from-blue-50 to-purple-50 border-b border-slate-200 px-6 py-3">
+        <div className="bg-linear-to-r from-sky-50 to-blue-50 border-b border-slate-200 px-6 py-3">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-600">Viewing:</p>
               <p className="text-lg font-semibold text-slate-900">
                 {tabs.find(t => t.id === activeTab)?.label} 
-                <span className="ml-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-linear-to-r from-blue-100 to-purple-100 text-blue-700">
+                <span className="ml-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-linear-to-r from-sky-100 to-blue-100 text-blue-700">
                   {tabs.find(t => t.id === activeTab)?.count} entries
                 </span>
               </p>
@@ -151,7 +151,7 @@ const FormsData = () => {
             </thead>
             <tbody className="divide-y divide-slate-200">
               {(mockData[activeTab] || []).map((item) => (
-                <tr key={item.id} className="hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 transition-colors duration-200">
+                <tr key={item.id} className="hover:bg-linear-to-r hover:from-sky-50 hover:to-blue-50 transition-colors duration-200">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">#{item.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{item.email}</td>

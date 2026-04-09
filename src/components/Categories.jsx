@@ -85,7 +85,7 @@ const Categories = () => {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="bg-linear-to-r from-purple-600 to-pink-600 px-6 py-4">
+            <div className="bg-linear-to-r from-sky-600 to-blue-700 px-6 py-4">
               <h3 className="text-xl font-semibold text-white">
                 {editingCategory ? 'Edit Category' : 'Add Category'}
               </h3>
@@ -97,7 +97,7 @@ const Categories = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 outline-none"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all duration-200 outline-none"
                   placeholder="Enter category name"
                   required
                 />
@@ -107,7 +107,7 @@ const Categories = () => {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 outline-none resize-none"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all duration-200 outline-none resize-none"
                   rows="3"
                   placeholder="Enter category description"
                   required
@@ -123,7 +123,7 @@ const Categories = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 text-sm font-medium text-white bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="px-6 py-3 text-sm font-medium text-white bg-linear-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   {editingCategory ? 'Update Category' : 'Add Category'}
                 </button>

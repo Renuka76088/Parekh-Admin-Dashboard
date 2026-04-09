@@ -40,7 +40,7 @@ const Layout = () => {
       } ${sidebarOpen ? 'w-72 xl:w-80' : sidebarCollapsed ? 'w-20' : 'w-72 xl:w-80'}`}>
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 border-b border-slate-200 bg-linear-to-r from-blue-600 to-purple-600">
+          <div className="flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 border-b border-slate-200 bg-linear-to-r from-sky-600 to-blue-700">
             <div className="flex items-center gap-3">
               <div className="h-8 w-8 rounded-lg bg-white bg-opacity-20 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">A</span>
@@ -76,7 +76,7 @@ const Layout = () => {
                     title={sidebarCollapsed ? item.name : undefined}
                     className={`group flex items-center ${sidebarCollapsed ? 'justify-center' : ''} px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                       isActive
-                        ? 'bg-linear-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                        ? 'bg-linear-to-r from-sky-500 to-blue-600 text-white shadow-lg'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
@@ -93,7 +93,7 @@ const Layout = () => {
           {/* Footer - Always visible */}
           <div className="shrink-0 p-4 border-t border-slate-200">
             <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="h-8 w-8 rounded-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-linear-to-r from-sky-500 to-blue-600 flex items-center justify-center">
                 <span className="text-white text-sm font-medium">AD</span>
               </div>
               <div className={`${sidebarCollapsed ? 'hidden' : 'ml-3'}`}>
@@ -136,7 +136,7 @@ const Layout = () => {
 
               {/* Profile dropdown */}
               <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-linear-to-r from-sky-500 to-blue-600 flex items-center justify-center">
                   <span className="text-white text-sm font-medium">A</span>
                 </div>
               </div>
