@@ -15,6 +15,8 @@ export const authorizedPersonApi = {
   bulkUpload: (formData) => api.post('/authorized-person/bulk-upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  update: (id, data) => api.put(`/authorized-person/${id}`, data),
+  delete: (id) => api.delete(`/authorized-person/${id}`),
 };
 
 export const formsApi = {
@@ -33,6 +35,9 @@ export const productApi = {
   add: (formData) => api.post('/product', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  update: (id, formData) => api.put(`/product/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   delete: (id) => api.delete(`/product/${id}`),
 };
 
@@ -41,6 +46,53 @@ export const categoryApi = {
   add: (data) => api.post('/category', data),
   update: (id, data) => api.put(`/category/${id}`, data),
   delete: (id) => api.delete(`/category/${id}`),
+};
+
+export const blogApi = {
+  list: (siteId, status) => {
+    let url = '/blogs';
+    const params = [];
+    if (siteId && siteId !== 'all') params.push(`siteId=${siteId}`);
+    if (status) params.push(`status=${status}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
+    return api.get(url);
+  },
+  add: (formData) => api.post('/blogs', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  update: (id, formData) => api.put(`/blogs/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  delete: (id) => api.delete(`/blogs/${id}`),
+};
+
+export const careerApi = {
+  list: (siteId, status) => {
+    let url = '/careers';
+    const params = [];
+    if (siteId && siteId !== 'all') params.push(`siteId=${siteId}`);
+    if (status) params.push(`status=${status}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
+    return api.get(url);
+  },
+  add: (data) => api.post('/careers', data),
+  update: (id, data) => api.put(`/careers/${id}`, data),
+  delete: (id) => api.delete(`/careers/${id}`),
+};
+
+export const mediaEventApi = {
+  list: (siteId) => {
+    let url = '/media-events';
+    if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
+    return api.get(url);
+  },
+  add: (formData) => api.post('/media-events', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  update: (id, formData) => api.put(`/media-events/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  delete: (id) => api.delete(`/media-events/${id}`),
 };
 
 export default api;

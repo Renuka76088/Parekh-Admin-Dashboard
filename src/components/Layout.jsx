@@ -1,13 +1,17 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { HomeIcon, DocumentTextIcon, UserGroupIcon, CubeIcon, TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon, PhotoIcon, Bars3Icon, XMarkIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { 
+  HomeIcon, DocumentTextIcon, UserGroupIcon, CubeIcon, 
+  TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon, 
+  PhotoIcon, Bars3Icon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon,
+  BellIcon, UserCircleIcon
+} from '@heroicons/react/24/outline';
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 
-  // Close sidebar on mobile when route changes
   useEffect(() => {
     setSidebarOpen(false);
   }, [location]);
@@ -25,128 +29,127 @@ const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 lg:flex">
-      {/* Mobile sidebar overlay */}
+    <div className="min-h-screen bg-[#f8fafc] flex">
+      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 transform bg-white shadow-2xl transition-all duration-300 ease-in-out lg:translate-x-0 lg:h-screen lg:flex-shrink-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } ${sidebarOpen ? 'w-72 xl:w-80' : sidebarCollapsed ? 'w-20' : 'w-72 xl:w-80'}`}>
-        <div className="flex h-full flex-col">
-          {/* Logo */}
-          <div className="flex h-16 shrink-0 items-center justify-between px-4 sm:px-6 border-b border-slate-200 bg-linear-to-r from-sky-600 to-blue-700">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-white bg-opacity-20 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">A</span>
+      <aside 
+        className={`fixed inset-y-0 left-0 z-50 transform border-r border-slate-200 bg-white transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-72 xl:w-80'}`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Logo Section */}
+          <div className="flex h-20 items-center justify-between px-6 border-b border-slate-100">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl bg-indigo-600 shadow-lg shadow-indigo-200">
+                <span className="text-white font-black text-xl">P</span>
               </div>
-              <span className={`${sidebarCollapsed ? 'hidden' : 'inline-flex'} ml-1 text-xl font-bold text-white`}>Admin Panel</span>
+              <span className={`font-black text-xl text-slate-900 tracking-tight transition-opacity duration-300 ${sidebarCollapsed ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
+                Parekh <span className="text-indigo-600 text-sm font-bold uppercase ml-1">Admin</span>
+              </span>
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                className="hidden lg:inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+            <button 
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              >
-                {sidebarCollapsed ? <ArrowRightIcon className="h-5 w-5" /> : <ArrowLeftIcon className="h-5 w-5" />}
-              </button>
-              <button
-                className="lg:hidden text-white hover:text-slate-200 transition-colors"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <XMarkIcon className="h-6 w-6" />
-              </button>
-            </div>
+                className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 transition-colors"
+            >
+                {sidebarCollapsed ? <ChevronRightIcon className="h-4 w-4" /> : <ChevronLeftIcon className="h-4 w-4" />}
+            </button>
           </div>
 
-          {/* Navigation - Scrollable area */}
-          <div className="flex-1 overflow-y-auto">
-            <nav className={`px-3 py-6 space-y-2 ${sidebarCollapsed ? 'space-y-3' : ''}`}>
-              {navigation.map((item) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    title={sidebarCollapsed ? item.name : undefined}
-                    className={`group flex items-center ${sidebarCollapsed ? 'justify-center' : ''} px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                      isActive
-                        ? 'bg-linear-to-r from-sky-500 to-blue-600 text-white shadow-lg'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
-                  >
-                    <item.icon className={`h-5 w-5 transition-colors ${
-                      isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'
-                    }`} />
-                    <span className={`${sidebarCollapsed ? 'hidden' : 'ml-3'}`}>{item.name}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
+          {/* Navigation */}
+          <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1.5 custom-scrollbar">
+            {navigation.map((item) => {
+              const isActive = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center p-3 rounded-xl transition-all duration-200 group relative ${
+                    isActive
+                      ? 'bg-indigo-50 text-indigo-700 font-bold'
+                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  <item.icon className={`h-6 w-6 shrink-0 transition-colors ${
+                    isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'
+                  }`} />
+                  <span className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+                    {item.name}
+                  </span>
+                  {isActive && !sidebarCollapsed && (
+                      <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-indigo-600"></div>
+                  )}
+                  {sidebarCollapsed && (
+                      <div className="absolute left-14 scale-0 group-hover:scale-100 transition-transform origin-left bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-bold z-50 shadow-xl ml-2">
+                          {item.name}
+                      </div>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-          {/* Footer - Always visible */}
-          <div className="shrink-0 p-4 border-t border-slate-200">
-            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="h-8 w-8 rounded-full bg-linear-to-r from-sky-500 to-blue-600 flex items-center justify-center">
-                <span className="text-white text-sm font-medium">AD</span>
+          {/* User Profile */}
+          <div className="p-4 border-t border-slate-100">
+            <div className={`p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors flex items-center overflow-hidden ${sidebarCollapsed ? 'justify-center' : ''}`}>
+              <div className="h-10 w-10 shrink-0 rounded-full border-2 border-white shadow-sm flex items-center justify-center bg-indigo-100 text-indigo-700 font-black">
+                A
               </div>
-              <div className={`${sidebarCollapsed ? 'hidden' : 'ml-3'}`}>
-                <p className="text-sm font-medium text-slate-900">Admin User</p>
-                <p className="text-xs text-slate-500">admin@company.com</p>
+              <div className={`ml-3 transition-opacity duration-300 ${sidebarCollapsed ? 'hidden' : 'block'}`}>
+                <p className="text-sm font-bold text-slate-900 truncate">Siddharth Parekh</p>
+                <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Super Admin</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </aside>
 
-      {/* Main content */}
-      <div className={`flex-1 min-w-0 ${sidebarCollapsed ? 'lg:ml-20 xl:ml-24' : 'lg:ml-72 xl:ml-80'} h-screen overflow-y-auto`}>
-        {/* Top bar */}
-        <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-slate-200 shadow-sm">
-          <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Header / Navbar */}
+        <header className="h-20 shrink-0 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-6 lg:px-10 flex items-center justify-between z-10">
+          <div className="flex items-center gap-4">
             <button
-              className="lg:hidden text-slate-500 hover:text-slate-700 transition-colors"
+              className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-xl"
               onClick={() => setSidebarOpen(true)}
             >
               <Bars3Icon className="h-6 w-6" />
             </button>
-
-            <div className="flex items-center space-x-4">
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold text-slate-900">
-                  {navigation.find(item => item.href === location.pathname)?.name || 'Dashboard'}
-                </h1>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              {/* Notification bell */}
-              <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM15 7v5h5l-5 5v-5z" />
-                </svg>
-                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-              </button>
-
-              {/* Profile dropdown */}
-              <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-linear-to-r from-sky-500 to-blue-600 flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">A</span>
-                </div>
-              </div>
+            <div className="hidden lg:block">
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+                {navigation.find(item => item.href === location.pathname)?.name || 'Dashboard'}
+              </h1>
             </div>
           </div>
-        </div>
 
-        {/* Page content */}
-        <main className="py-8 px-4 sm:px-6 lg:px-8 xl:px-10">
-          <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse mr-2"></span>
+                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Server: Online</span>
+            </div>
+            
+            <div className="flex items-center gap-3">
+                <button className="p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl relative">
+                    <BellIcon className="h-6 w-6" />
+                    <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button className="p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl">
+                    <UserCircleIcon className="h-6 w-6" />
+                </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Scrollable Content Area */}
+        <main className="flex-1 overflow-y-auto custom-scrollbar bg-[#f8fafc] px-6 py-8 lg:px-10">
+          <div className="max-w-7xl mx-auto animate-fade-in-up">
             <Outlet />
           </div>
         </main>
