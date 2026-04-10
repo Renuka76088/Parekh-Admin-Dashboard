@@ -1,49 +1,86 @@
-import { useState } from 'react';
-import { EnvelopeIcon, EyeIcon, CheckCircleIcon, ClockIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect, useMemo } from 'react';
+import { EnvelopeIcon, EyeIcon, CheckCircleIcon, ClockIcon, XCircleIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { formsApi } from '../utils/api';
 
 const FormsData = () => {
-  const [activeTab, setActiveTab] = useState('tender');
+  const [activeTab, setActiveTab] = useState('trade');
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [selectedSite, setSelectedSite] = useState('All Sites');
 
   const tabs = [
-    { id: 'tender', label: 'Tender & Contract', count: 24 },
-    { id: 'quotation', label: 'E-Quotation', count: 18 },
-    { id: 'auction', label: 'E-Auction', count: 12 },
-    { id: 'appointment', label: 'Appointment', count: 8 },
-    { id: 'membership', label: 'Membership', count: 15 },
-    { id: 'buyer', label: 'Buyer', count: 32 },
-    { id: 'seller', label: 'Seller', count: 28 },
-    { id: 'trade', label: 'Trade Enquiry', count: 20 },
+    { id: 'trade', label: 'Trade Enquiry' },
+    { id: 'quotation', label: 'E-Quotation' },
+    { id: 'auction', label: 'E-Auction' },
+    { id: 'appointment', label: 'Appointment' },
+    { id: 'buyer', label: 'E-Buyer' },
+    { id: 'seller', label: 'E-Seller' },
+    { id: 'contact', label: 'Contact Us' },
+    { id: 'bulk', label: 'Bulk Seller' },
   ];
 
-  const mockData = {
-    tender: [
-      { id: 1, name: 'John Doe', email: 'john@example.com', date: '2023-10-01', status: 'Pending', phone: '+1 234 567 8900' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', date: '2023-10-02', status: 'Approved', phone: '+1 234 567 8901' },
-      { id: 3, name: 'Mike Johnson', email: 'mike@example.com', date: '2023-10-03', status: 'Rejected', phone: '+1 234 567 8902' },
-    ],
-    quotation: [
-      { id: 1, name: 'Alice Johnson', email: 'alice@example.com', date: '2023-10-03', status: 'Pending', phone: '+1 234 567 8903' },
-      { id: 2, name: 'Bob Wilson', email: 'bob@example.com', date: '2023-10-04', status: 'Approved', phone: '+1 234 567 8904' },
-    ],
-    auction: [
-      { id: 1, name: 'Sarah Davis', email: 'sarah@example.com', date: '2023-10-05', status: 'Pending', phone: '+1 234 567 8905' },
-    ],
-    appointment: [
-      { id: 1, name: 'Tom Brown', email: 'tom@example.com', date: '2023-10-06', status: 'Approved', phone: '+1 234 567 8906' },
-    ],
-    membership: [
-      { id: 1, name: 'Lisa Green', email: 'lisa@example.com', date: '2023-10-07', status: 'Pending', phone: '+1 234 567 8907' },
-    ],
-    buyer: [
-      { id: 1, name: 'David Lee', email: 'david@example.com', date: '2023-10-08', status: 'Approved', phone: '+1 234 567 8908' },
-    ],
-    seller: [
-      { id: 1, name: 'Emma White', email: 'emma@example.com', date: '2023-10-09', status: 'Pending', phone: '+1 234 567 8909' },
-    ],
-    trade: [
-      { id: 1, name: 'Chris Black', email: 'chris@example.com', date: '2023-10-10', status: 'Approved', phone: '+1 234 567 8910' },
-    ],
+  const fetchAllData = async () => {
+    try {
+      setLoading(true);
+      
+      const fetchWithCatch = async (apiCall) => {
+        try {
+          const res = await apiCall();
+          return res.data.data || [];
+        } catch (e) {
+          console.error("API Call failed:", e.config?.url);
+          return [];
+        }
+      };
+
+      const [trade, quot, auc, appt, buyer, seller, contact, bulk] = await Promise.all([
+        fetchWithCatch(formsApi.getTradeEnquiries),
+        fetchWithCatch(formsApi.getQuotations),
+        fetchWithCatch(formsApi.getAuctions),
+        fetchWithCatch(formsApi.getAppointments),
+        fetchWithCatch(formsApi.getBuyerSubmissions),
+        fetchWithCatch(formsApi.getSellerSubmissions),
+        fetchWithCatch(formsApi.getContactSubmissions),
+        fetchWithCatch(formsApi.getBulkSellers),
+      ]);
+
+      setData({
+        trade,
+        quotation: quot,
+        auction: auc,
+        appointment: appt,
+        buyer,
+        seller,
+        contact,
+        bulk
+      });
+    } catch (error) {
+      console.error("Error fetching forms data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const websites = [
+    { id: 'All Sites', name: 'All Sites' },
+    { id: 'ParekhChamberofTextile01', name: 'Parekh Chamber of Textile' },
+    { id: 'ParekhETradeMarket02', name: 'Parekh e-Trade Market' },
+    { id: 'ParekhSouthernPolyfabrics03', name: 'Parekh Southern Polyfabrics' },
+    { id: 'ParekhLinen04', name: 'Parekh Linen' },
+    { id: 'ParekhRayon05', name: 'Parekh Rayon' },
+    { id: 'ParekhFabrics06', name: 'Parekh Fabrics' },
+    { id: 'ParekhSilk07', name: 'Parekh Silk' },
+  ];
+
+  const filteredData = useMemo(() => {
+    const currentTabData = data[activeTab] || [];
+    if (selectedSite === 'All Sites') return currentTabData;
+    return currentTabData.filter(item => item.siteId === selectedSite);
+  }, [data, activeTab, selectedSite]);
 
   const handleEmail = (item) => {
     // Mock email functionality
@@ -104,96 +141,164 @@ const FormsData = () => {
       <div className="bg-white rounded-2xl border border-slate-200 premium-shadow overflow-hidden">
         {/* Filter Section */}
         <div className="bg-linear-to-r from-slate-50 to-slate-100 border-b border-slate-200 px-6 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <label className="text-sm font-semibold text-slate-700">Select Form Category:</label>
-            <select
-              value={activeTab}
-              onChange={(e) => setActiveTab(e.target.value)}
-              className="flex-1 sm:flex-none px-4 py-2.5 border border-slate-300 rounded-xl bg-white text-slate-900 font-medium focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 outline-none soft-shadow"
-            >
-              {tabs.map((tab) => (
-                <option key={tab.id} value={tab.id}>
-                  {tab.label} ({tab.count})
-                </option>
-              ))}
-            </select>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <label className="text-sm font-semibold text-slate-700">Category:</label>
+              <select
+                value={activeTab}
+                onChange={(e) => setActiveTab(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-900 font-medium focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none soft-shadow min-w-[180px]"
+              >
+                {tabs.map((tab) => (
+                  <option key={tab.id} value={tab.id}>
+                    {tab.label} ({data[tab.id]?.length || 0})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center text-sm font-semibold text-slate-700">
+                <FunnelIcon className="h-4 w-4 mr-2" />
+                Filter Site:
+              </div>
+              <select
+                value={selectedSite}
+                onChange={(e) => setSelectedSite(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-900 font-medium focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none soft-shadow min-w-[220px]"
+              >
+                {websites.map((site) => (
+                  <option key={site.id} value={site.id}>
+                    {site.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Active Tab Info */}
         <div className="bg-linear-to-r from-sky-50 to-blue-50 border-b border-slate-200 px-6 py-3">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600">Viewing:</p>
-              <p className="text-lg font-semibold text-slate-900">
-                {tabs.find(t => t.id === activeTab)?.label} 
-                <span className="ml-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-linear-to-r from-sky-100 to-blue-100 text-blue-700">
-                  {tabs.find(t => t.id === activeTab)?.count} entries
-                </span>
+            <div className="flex items-center gap-4">
+              <p className="text-sm font-medium text-slate-900">
+                Viewing: <span className="text-blue-600 uppercase font-bold">{activeTab}</span>
+              </p>
+              <span className="h-4 w-px bg-slate-300"></span>
+              <p className="text-sm font-medium text-slate-900">
+                Site: <span className="text-blue-600 font-bold">{selectedSite}</span>
               </p>
             </div>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 uppercase tracking-tight">
+              {filteredData.length} records found
+            </span>
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-linear-to-r from-slate-100 to-slate-50">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">ID</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {(mockData[activeTab] || []).map((item) => (
-                <tr key={item.id} className="hover:bg-linear-to-r hover:from-sky-50 hover:to-blue-50 transition-colors duration-200">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">#{item.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{item.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{item.phone}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{item.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border soft-shadow ${getStatusColor(item.status)}`}>
-                      {getStatusIcon(item.status)}
-                      <span className="ml-1.5">{item.status}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleEmail(item)}
-                        className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                        title="Send Email"
-                      >
-                        <EnvelopeIcon className="h-4 w-4" />
-                      </button>
-                      <button
-                        className="p-2 text-slate-600 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors duration-200"
-                        title="View Details"
-                      >
-                        <EyeIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+          {loading ? (
+            <div className="p-20 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+              <p className="mt-4 text-slate-600 font-medium">Fetching secure data from server...</p>
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-linear-to-r from-slate-100 to-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-widest">Site ID</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-widest">Client Name</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-widest">Contact</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-widest">Date Submitted</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-widest">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-200 bg-white">
+                {filteredData.map((item) => (
+                  <tr key={item._id} className="hover:bg-blue-50/50 transition-colors duration-200">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-xs font-bold text-blue-600 px-2 py-1 bg-blue-50 border border-blue-100 rounded-md">
+                        {item.siteId || 'N/A'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-slate-900">
+                          {item.traderName || item.visitorName || item.buyerName || item.sellerName || item.participantName || item.name || 'Anonymous'}
+                        </span>
+                        <span className="text-xs text-slate-500 font-medium">
+                          {item.businessName || item.legalBusinessName || item.businessTitle || item.businessAddress?.substring(0, 20) || 'Individual'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col">
+                        <span className="text-sm text-slate-700 font-medium">{item.email || item.emailId || 'N/A'}</span>
+                        <span className="text-xs text-slate-500">{item.mobileNo || item.mobile || item.phone || 'N/A'}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col">
+                        <span className="text-sm text-slate-900 font-semibold">
+                          {activeTab === 'trade' && (item.enquiryType || 'General')}
+                          {activeTab === 'quotation' && (item.quotationType || 'General')}
+                          {activeTab === 'bulk' && (item.productType || 'Bulk')}
+                          {activeTab === 'appointment' && (item.reasonForVisit || 'Visit')}
+                          {activeTab === 'buyer' && (item.categoryOfBusiness || 'Buyer')}
+                          {activeTab === 'seller' && (item.categoryOfBusiness || 'Seller')}
+                          {activeTab === 'contact' && 'Contact Msg'}
+                          {activeTab === 'auction' && 'Auction Participation'}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          {item.gstNo || item.quantity || item.requiredQuantity || 'N/A'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center text-sm text-slate-600 font-medium">
+                        <ClockIcon className="h-4 w-4 mr-2 text-slate-400" />
+                        {item.createdAt ? new Date(item.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleEmail(item)}
+                          className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-200 group"
+                          title="Reply via Email"
+                        >
+                          <EnvelopeIcon className="h-4 w-4" />
+                          <span className="text-xs font-bold">Reply</span>
+                        </button>
+                        {item.gstCertificate || item.proofFile || item.kycDocuments?.length > 0 ? (
+                          <a
+                            href={`http://localhost:5000/${item.gstCertificate || item.proofFile || (item.kycDocuments && item.kycDocuments[0])}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-blue-400 hover:text-blue-900 transition-colors duration-200"
+                            title="View Document"
+                          >
+                            <EyeIcon className="h-5 w-5" />
+                          </a>
+                        ) : null}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Empty state */}
-        {(!mockData[activeTab] || mockData[activeTab].length === 0) && (
-          <div className="text-center py-12 bg-slate-50">
-            <svg className="mx-auto h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-slate-900">No data available</h3>
-            <p className="mt-1 text-sm text-slate-500">No form submissions found for this category.</p>
+        {!loading && filteredData.length === 0 && (
+          <div className="text-center py-20 bg-slate-50/50">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-100 mb-4">
+              <EnvelopeIcon className="h-10 w-10 text-slate-300" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 tracking-tight">No submissions found</h3>
+            <p className="mt-2 text-sm text-slate-500 max-w-xs mx-auto">
+              There are no {activeTab} records available for <span className="font-bold text-slate-700">{selectedSite}</span> at the moment.
+            </p>
           </div>
         )}
       </div>
@@ -202,3 +307,12 @@ const FormsData = () => {
 };
 
 export default FormsData;
+
+const customStyles = `
+  .soft-shadow {
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+  }
+  .premium-shadow {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  }
+`;

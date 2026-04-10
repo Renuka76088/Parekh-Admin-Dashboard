@@ -1,42 +1,123 @@
-import { ChartBarIcon, UsersIcon, CubeIcon, DocumentTextIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
+import { ChartBarIcon, UsersIcon, CubeIcon, DocumentTextIcon, ArrowUpIcon, ArrowDownIcon, GlobeAltIcon, ServerIcon, CircleStackIcon } from '@heroicons/react/24/outline';
+import { formsApi, authorizedPersonApi } from '../utils/api';
+import api from '../utils/api';
 
 const Dashboard = () => {
+  const [statsData, setStatsData] = useState({
+    totalForms: 0,
+    authorities: 0,
+    sitesCount: 0,
+    loading: true
+  });
+  const [systemStatus, setSystemStatus] = useState({
+    server: 'Checking...',
+    db: 'Checking...',
+    api: 'Checking...'
+  });
+
+  useEffect(() => {
+    fetchDashboardData();
+    checkSystemStatus();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const fetchWithCatch = async (apiCall) => {
+        try {
+          const res = await apiCall();
+          return res.data.data || [];
+        } catch (e) {
+          console.error("API Call failed:", e.config?.url);
+          return [];
+        }
+      };
+
+      const [trade, quot, auc, appt, buyer, seller, contact, bulk, authoritiesRes] = await Promise.all([
+        fetchWithCatch(formsApi.getTradeEnquiries),
+        fetchWithCatch(formsApi.getQuotations),
+        fetchWithCatch(formsApi.getAuctions),
+        fetchWithCatch(formsApi.getAppointments),
+        fetchWithCatch(formsApi.getBuyerSubmissions),
+        fetchWithCatch(formsApi.getSellerSubmissions),
+        fetchWithCatch(formsApi.getContactSubmissions),
+        fetchWithCatch(formsApi.getBulkSellers),
+        authorizedPersonApi.list().catch(() => ({ data: { data: [] } })),
+      ]);
+
+      const allSubmissions = [
+        ...trade, ...quot, ...auc, ...appt, ...buyer, ...seller, ...contact, ...bulk
+      ];
+
+      const sites = new Set(allSubmissions.map(item => item.siteId).filter(Boolean));
+
+      setStatsData({
+        totalForms: allSubmissions.length,
+        authorities: (authoritiesRes.data?.data || []).length,
+        sitesCount: sites.size,
+        loading: false
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      setStatsData(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  const checkSystemStatus = async () => {
+    try {
+      const start = Date.now();
+      await api.get('/'); // Now hits /api/ (baseURL) which we added health check for
+      const latency = Date.now() - start;
+      setSystemStatus({
+        server: 'Online',
+        db: 'Connected',
+        api: `Active (${latency}ms)`
+      });
+    } catch (error) {
+      setSystemStatus({
+        server: 'Offline',
+        db: 'Unknown',
+        api: 'Error'
+      });
+    }
+  };
+
   const stats = [
     {
-      name: 'Total Forms',
-      value: '150',
-      change: '+12%',
+      name: 'Total Submissions',
+      value: statsData.loading ? '...' : statsData.totalForms,
+      change: '+Fresh',
       changeType: 'increase',
       icon: DocumentTextIcon,
-      gradient: 'from-blue-500 to-blue-600',
-      bgGradient: 'from-blue-50 to-blue-100'
+      gradient: 'from-blue-600 to-indigo-600',
+      bgGradient: 'from-blue-50 to-indigo-50'
     },
     {
-      name: 'Products',
-      value: '45',
-      change: '+8%',
+      name: 'Active Sites',
+      value: statsData.loading ? '...' : statsData.sitesCount,
+      change: 'Marketwide',
       changeType: 'increase',
-      icon: CubeIcon,
-      gradient: 'from-green-500 to-green-600',
-      bgGradient: 'from-green-50 to-green-100'
+      icon: GlobeAltIcon,
+      gradient: 'from-emerald-600 to-teal-600',
+      bgGradient: 'from-emerald-50 to-teal-50'
     },
     {
-      name: 'Authorities',
-      value: '12',
-      change: '+2',
+      name: 'Authorized Persons',
+      value: statsData.loading ? '...' : statsData.authorities,
+      change: 'Verified',
       changeType: 'increase',
       icon: UsersIcon,
-      gradient: 'from-sky-500 to-blue-600',
+      gradient: 'from-sky-600 to-blue-700',
       bgGradient: 'from-sky-50 to-blue-100'
     },
     {
-      name: 'Blogs',
+      name: 'Form Categories',
       value: '8',
-      change: '-1',
-      changeType: 'decrease',
+      change: 'Optimized',
+      changeType: 'increase',
       icon: ChartBarIcon,
-      gradient: 'from-orange-500 to-orange-600',
-      bgGradient: 'from-orange-50 to-orange-100'
+      gradient: 'from-amber-600 to-orange-700',
+      bgGradient: 'from-amber-50 to-orange-100'
     },
   ];
 
@@ -172,27 +253,35 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">System Status</h3>
+          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+            <ServerIcon className="h-5 w-5 mr-2 text-slate-400" />
+            System Status
+          </h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">Server Status</span>
+              <span className="text-sm font-medium text-slate-600">Backend Server</span>
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <span className="text-sm font-medium text-green-600">Online</span>
+                <div className={`w-2 h-2 rounded-full mr-2 ${systemStatus.server === 'Online' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                <span className={`text-sm font-bold ${systemStatus.server === 'Online' ? 'text-green-600' : 'text-red-600'}`}>
+                  {systemStatus.server}
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">Database</span>
+              <span className="text-sm font-medium text-slate-600">MongoDB Database</span>
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <span className="text-sm font-medium text-green-600">Connected</span>
+                <CircleStackIcon className={`h-4 w-4 mr-2 ${systemStatus.db === 'Connected' ? 'text-green-500' : 'text-slate-400'}`} />
+                <span className={`text-sm font-bold ${systemStatus.db === 'Connected' ? 'text-green-600' : 'text-slate-600'}`}>
+                  {systemStatus.db}
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">Email Service</span>
+              <span className="text-sm font-medium text-slate-600">API Health</span>
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <span className="text-sm font-medium text-green-600">Active</span>
+                <span className="text-xs font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                  {systemStatus.api}
+                </span>
               </div>
             </div>
           </div>

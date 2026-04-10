@@ -1,18 +1,35 @@
-import { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
+import { PlusIcon, PencilIcon, TrashIcon, KeyIcon } from '@heroicons/react/24/outline';
+import { authorizedPersonApi } from '../utils/api';
 
 const Authorities = () => {
-  const [authorities, setAuthorities] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Buyer', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Seller', status: 'Active' },
-  ]);
+  const [authorities, setAuthorities] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingAuthority, setEditingAuthority] = useState(null);
-  const [formData, setFormData] = useState({ name: '', email: '', role: '', status: 'Active' });
+  const [formData, setFormData] = useState({ name: '', code: '' });
+
+  useEffect(() => {
+    fetchAuthorities();
+  }, []);
+
+  const fetchAuthorities = async () => {
+    try {
+      setLoading(true);
+      const response = await authorizedPersonApi.list();
+      if (response.data.success) {
+        setAuthorities(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching authorities:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAdd = () => {
     setEditingAuthority(null);
-    setFormData({ name: '', email: '', role: '', status: 'Active' });
+    setFormData({ name: '', code: '' });
     setShowModal(true);
   };
 
@@ -26,14 +43,25 @@ const Authorities = () => {
     setAuthorities(authorities.filter(auth => auth.id !== id));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingAuthority) {
-      setAuthorities(authorities.map(auth => auth.id === editingAuthority.id ? { ...formData, id: editingAuthority.id } : auth));
-    } else {
-      setAuthorities([...authorities, { ...formData, id: Date.now() }]);
+    try {
+      if (editingAuthority) {
+        // Edit not fully implemented in current backend controller, but placeholder
+        alert("Edit functionality not yet implemented in backend.");
+      } else {
+        const response = await authorizedPersonApi.add(formData);
+        if (response.data.success) {
+          await fetchAuthorities();
+          setShowModal(false);
+        } else {
+          alert(response.data.message || "Failed to add authority");
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting authority:", error);
+      alert(error.response?.data?.message || "Internal server error");
     }
-    setShowModal(false);
   };
 
   return (
@@ -48,48 +76,51 @@ const Authorities = () => {
           Add Authority
         </button>
       </div>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {authorities.map((auth) => (
-              <tr key={auth.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{auth.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{auth.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{auth.role}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    auth.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {auth.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => handleEdit(auth)}
-                    className="text-blue-600 hover:text-blue-900 mr-4"
-                  >
-                    <PencilIcon className="w-5 h-5 inline" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(auth.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    <TrashIcon className="w-5 h-5 inline" />
-                  </button>
-                </td>
+      <div className="bg-white rounded-2xl border border-slate-200 premium-shadow overflow-hidden">
+        {loading ? (
+          <div className="p-12 text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+            <p className="mt-4 text-slate-600">Loading authorities...</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-linear-to-r from-slate-100 to-slate-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Access Code</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Added On</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {authorities.map((auth) => (
+                <tr key={auth._id} className="hover:bg-linear-to-r hover:from-sky-50 hover:to-blue-50 transition-colors duration-200">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">{auth.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <code className="px-2 py-1 bg-slate-100 text-blue-600 rounded-md font-mono text-sm">{auth.code}</code>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                    {new Date(auth.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={() => handleEdit(auth)}
+                      className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200 mr-2"
+                    >
+                      <PencilIcon className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(auth._id)}
+                      className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {showModal && (
@@ -113,39 +144,21 @@ const Authorities = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 outline-none"
-                  placeholder="Enter email address"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Role</label>
-                <select
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 outline-none"
-                  required
-                >
-                  <option value="">Select Role</option>
-                  <option value="Buyer">Buyer</option>
-                  <option value="Seller">Seller</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 outline-none"
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Access Code</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 outline-none pr-12"
+                    placeholder="Create a unique access code"
+                    required
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    <KeyIcon className="h-5 w-5" />
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-slate-500">This code will be used by the person to authorize form submissions.</p>
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <button

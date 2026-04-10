@@ -1,18 +1,45 @@
-import { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
+import { PlusIcon, PencilIcon, TrashIcon, XMarkIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import { categoryApi } from '../utils/api';
 
 const Categories = () => {
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Electronics', description: 'Electronic products and gadgets' },
-    { id: 2, name: 'Consulting', description: 'Professional consulting services' },
-  ]);
+  const websites = [
+    { id: 'all', name: 'All Websites' },
+    { id: 'ParekhChamberofTextile01', name: 'Parekh Chamber of Textile' },
+    { id: 'ParekhETradeMarket02', name: 'Parekh e-Trade Market' },
+    { id: 'ParekhSouthernPolyfabrics03', name: 'Parekh Southern Polyfabrics' },
+    { id: 'ParekhLinen04', name: 'Parekh Linen' },
+    { id: 'ParekhRayon05', name: 'Parekh Rayon' },
+    { id: 'ParekhFabrics06', name: 'Parekh Fabrics' },
+    { id: 'ParekhSilk07', name: 'Parekh Silk' },
+  ];
+
+  const [selectedWebsite, setSelectedWebsite] = useState('all');
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [formData, setFormData] = useState({ name: '', siteId: 'ParekhETradeMarket02' });
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const res = await categoryApi.list(selectedWebsite === 'all' ? '' : selectedWebsite);
+      setCategories(res.data.data || []);
+    } catch (error) {
+      console.error("Fetch Categories Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, [selectedWebsite]);
 
   const handleAdd = () => {
     setEditingCategory(null);
-    setFormData({ name: '', description: '' });
+    setFormData({ name: '', siteId: selectedWebsite === 'all' ? 'ParekhETradeMarket02' : selectedWebsite });
     setShowModal(true);
   };
 
@@ -22,112 +49,164 @@ const Categories = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    setCategories(categories.filter(cat => cat.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure? This will not delete products, but they will no longer have a linked category.")) {
+      try {
+        await categoryApi.delete(id);
+        fetchCategories();
+      } catch (error) {
+        alert("Failed to delete category.");
+      }
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingCategory) {
-      setCategories(categories.map(cat => cat.id === editingCategory.id ? { ...formData, id: editingCategory.id } : cat));
-    } else {
-      setCategories([...categories, { ...formData, id: Date.now() }]);
+    try {
+      if (editingCategory) {
+        await categoryApi.update(editingCategory._id, formData);
+      } else {
+        await categoryApi.add(formData);
+      }
+      setShowModal(false);
+      fetchCategories();
+    } catch (error) {
+      alert(error.response?.data?.message || "Operation failed.");
     }
-    setShowModal(false);
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Categories</h2>
-        <button
-          onClick={handleAdd}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center"
-        >
-          <PlusIcon className="w-5 h-5 mr-2" />
-          Add Category
-        </button>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-900">Category Management</h2>
+          <p className="mt-1 text-slate-600">Create global or site-specific categories for your products.</p>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <label className="inline-flex flex-col text-sm text-slate-700">
+            <span className="mb-2 font-semibold text-xs uppercase tracking-wider text-slate-500">Filter by Website</span>
+            <select
+              value={selectedWebsite}
+              onChange={(e) => setSelectedWebsite(e.target.value)}
+              className="min-w-[240px] px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-sm font-medium focus:ring-2 focus:ring-sky-500/20 transition-all shadow-sm outline-none"
+            >
+              {websites.map((site) => (
+                <option key={site.id} value={site.id}>{site.name}</option>
+              ))}
+            </select>
+          </label>
+
+          <button
+            onClick={handleAdd}
+            className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-sky-200 hover:bg-sky-700 transition-all mt-auto"
+          >
+            <PlusIcon className="w-5 h-5 mr-2" />
+            Add New Category
+          </button>
+        </div>
       </div>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {categories.map((cat) => (
-              <tr key={cat.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cat.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-500">{cat.description}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => handleEdit(cat)}
-                    className="text-blue-600 hover:text-blue-900 mr-4"
-                  >
-                    <PencilIcon className="w-5 h-5 inline" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(cat.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    <TrashIcon className="w-5 h-5 inline" />
-                  </button>
-                </td>
+
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500 italic">Category Name</th>
+                <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500 italic">Associated Site</th>
+                <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500 italic">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {loading ? (
+                <tr>
+                  <td colSpan={3} className="px-6 py-12 text-center text-slate-400">Loading Categories...</td>
+                </tr>
+              ) : categories.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="px-6 py-20 text-center">
+                    <div className="flex flex-col items-center">
+                      <GlobeAltIcon className="w-12 h-12 text-slate-200 mb-2" />
+                      <p className="text-slate-400 font-medium">No Categories Found for this site.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                categories.map((cat) => (
+                  <tr key={cat._id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900">{cat.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 border border-sky-100 uppercase tracking-tighter">
+                        {cat.siteId}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                      <button
+                        onClick={() => handleEdit(cat)}
+                        className="text-sky-600 hover:text-sky-900 p-2 rounded-lg bg-sky-50 transition-colors"
+                      >
+                        <PencilIcon className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(cat._id)}
+                        className="text-rose-500 hover:text-rose-900 p-2 rounded-lg bg-rose-50 transition-colors"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="bg-linear-to-r from-sky-600 to-blue-700 px-6 py-4">
-              <h3 className="text-xl font-semibold text-white">
-                {editingCategory ? 'Edit Category' : 'Add Category'}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="w-full max-w-md overflow-hidden rounded-[2rem] bg-white shadow-2xl border border-slate-200">
+            <div className="bg-sky-600 px-6 py-5 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-white">
+                {editingCategory ? 'Edit Category' : 'Add New Category'}
               </h3>
+              <button onClick={() => setShowModal(false)} className="text-white/80 hover:text-white">
+                <XMarkIcon className="w-6 h-6" />
+              </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Name</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all duration-200 outline-none"
-                  placeholder="Enter category name"
-                  required
-                />
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Category Name</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                    placeholder="e.g. Raw Materials"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Target Website</label>
+                  <select
+                    value={formData.siteId}
+                    onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-medium"
+                    required
+                  >
+                    {websites.filter(s => s.id !== 'all').map((site) => (
+                      <option key={site.id} value={site.id}>{site.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all duration-200 outline-none resize-none"
-                  rows="3"
-                  placeholder="Enter category description"
-                  required
-                />
-              </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-6 py-3 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-3 text-sm font-medium text-white bg-linear-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  {editingCategory ? 'Update Category' : 'Add Category'}
-                </button>
-              </div>
+
+              <button
+                type="submit"
+                className="w-full rounded-2xl bg-sky-600 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-sky-200 hover:bg-sky-700 transition-all transform active:scale-95"
+              >
+                {editingCategory ? 'Update Category' : 'Create Category'}
+              </button>
             </form>
           </div>
         </div>
@@ -136,4 +215,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Categories;
