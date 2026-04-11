@@ -181,29 +181,29 @@ const Blogs = () => {
                             </span>
                         </div>
                     </div>
-                    <div className="flex-1 p-8 flex flex-col">
+                    <div className="flex-1 p-8 flex flex-col bg-gradient-to-br from-white to-slate-50/50">
                         <div className="flex justify-between items-start mb-4">
-                            <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{blog.siteId?.replace('Parekh', '')}</span>
+                            <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg uppercase tracking-widest">{blog.siteId?.replace('Parekh', '')}</span>
                             <div className="flex gap-2">
-                                <button onClick={() => handleEdit(blog)} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
+                                <button onClick={() => handleEdit(blog)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
                                     <PencilIcon className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => handleDelete(blog._id)} className="p-2 text-slate-400 hover:text-rose-600 transition-colors">
+                                <button onClick={() => handleDelete(blog._id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
                                     <TrashIcon className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
-                        <h5 className="text-xl font-black text-slate-900 tracking-tight mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                        <h5 className="text-xl font-black text-slate-900 tracking-tight mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-tight">
                             {blog.title}
                         </h5>
-                        <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 flex-1">
+                        <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 flex-1 leading-relaxed">
                             {blog.content}
                         </p>
-                        <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
-                            <div className="flex items-center gap-1.5 text-slate-400">
-                                <CalendarIcon className="h-4 w-4" />
+                        <div className="flex items-center gap-4 pt-4 border-t border-slate-100/60">
+                            <div className="flex items-center gap-1.5 text-slate-400 bg-white px-2 py-1 rounded-lg border border-slate-100 shadow-sm">
+                                <CalendarIcon className="h-3.5 w-3.5 text-indigo-500" />
                                 <span className="text-[10px] font-bold uppercase tracking-widest">
-                                    {new Date(blog.createdAt).toLocaleDateString()}
+                                    {new Date(blog.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
                                 </span>
                             </div>
                         </div>
@@ -215,7 +215,7 @@ const Blogs = () => {
 
       {/* Editor Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-10 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10 bg-slate-900/60 backdrop-blur-sm">
           <div className="w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl border border-slate-200 animate-fade-in-up">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>

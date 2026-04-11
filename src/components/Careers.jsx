@@ -150,48 +150,48 @@ const Careers = () => {
             </div>
         ) : (
             careers.map((job) => (
-                <div key={job._id} className="premium-card p-10 group relative transition-all duration-500">
+                <div key={job._id} className="premium-card p-10 group relative transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-100/50 flex flex-col h-full bg-gradient-to-br from-white to-slate-50/30">
                     <div className="flex justify-between items-start mb-8">
                         <div>
-                             <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1 block">
+                             <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md uppercase tracking-widest mb-2 block w-fit">
                                 {job.siteId?.replace('Parekh', '') || 'Corporate'}
                             </span>
-                            <h4 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
+                            <h4 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors leading-tight">
                                 {job.title}
                             </h4>
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={() => handleEdit(job)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                            <button onClick={() => handleEdit(job)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
                                 <PencilIcon className="w-5 h-5" />
                             </button>
-                            <button onClick={() => handleDelete(job._id)} className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
+                            <button onClick={() => handleDelete(job._id)} className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
                                 <TrashIcon className="w-5 h-5" />
                             </button>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 mb-8">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
-                                <MapPinIcon className="h-5 w-5" />
+                    <div className="grid grid-cols-2 gap-4 mb-8 flex-1">
+                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-slate-100 group-hover:border-indigo-100 transition-colors shadow-sm">
+                            <div className="p-2 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
+                                <MapPinIcon className="h-4 w-4" />
                             </div>
-                            <span className="text-sm font-bold text-slate-600">{job.location}</span>
+                            <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">{job.location}</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
-                                <CurrencyDollarIcon className="h-5 w-5" />
+                        <div className="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-slate-100 group-hover:border-indigo-100 transition-colors shadow-sm">
+                            <div className="p-2 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
+                                <CurrencyDollarIcon className="h-4 w-4" />
                             </div>
-                            <span className="text-sm font-bold text-slate-600">{job.salary || 'Competitive'}</span>
+                            <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">{job.salary || 'Competitive'}</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-8 border-t border-slate-100">
-                        <div className="flex items-center gap-2">
-                             <EnvelopeIcon className="h-4 w-4 text-slate-400" />
-                             <span className="text-xs font-bold text-slate-500">{job.contactEmail}</span>
+                    <div className="flex items-center justify-between pt-8 border-t border-slate-100/60">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200/50 shadow-inner">
+                             <EnvelopeIcon className="h-3.5 w-3.5 text-slate-400" />
+                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{job.contactEmail || job.email}</span>
                         </div>
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-                            job.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
+                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${
+                            job.status === 'active' || job.status === 'Open' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
                         }`}>
                             {job.status}
                         </span>
@@ -203,7 +203,7 @@ const Careers = () => {
 
       {/* Provisioning Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-10 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10 bg-slate-900/60 backdrop-blur-sm">
           <div className="w-full max-w-3xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl border border-slate-200 animate-fade-in-up">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>

@@ -165,7 +165,7 @@ const Categories = () => {
 
       {/* Modal Profile Creation */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white shadow-2xl border border-slate-200 animate-fade-in-up">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
