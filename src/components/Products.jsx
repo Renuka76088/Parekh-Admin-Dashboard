@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { 
+import {
   PlusIcon, TrashIcon, PhotoIcon, XMarkIcon, PencilIcon,
   TagIcon, MagnifyingGlassIcon, ExclamationTriangleIcon,
   ChevronDownIcon
@@ -10,7 +10,7 @@ const Products = () => {
   const websites = [
     { id: 'all', name: 'All Platforms' },
     { id: 'ParekhChamberofTextile01', name: 'Chamber of Textile' },
-    { id: 'ParekhETradeMarket02', name: 'e-Trade Market' },
+    { id: 'ParekheTradeMarket02', name: 'e-Trade Market' },
     { id: 'ParekhSouthernPolyfabrics03', name: 'Southern Polyfabrics' },
     { id: 'ParekhLinen04', name: 'Linen' },
     { id: 'ParekhRayon05', name: 'Rayon' },
@@ -24,7 +24,7 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [formData, setFormData] = useState({ title: '', category: '', siteId: 'ParekhETradeMarket02' });
+  const [formData, setFormData] = useState({ title: '', category: '', siteId: 'ParekheTradeMarket02' });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({ title: false, category: false, siteId: false });
@@ -75,7 +75,7 @@ const Products = () => {
 
   const handleAdd = () => {
     setEditingProduct(null);
-    setFormData({ title: '', category: '', siteId: 'ParekhETradeMarket02' });
+    setFormData({ title: '', category: '', siteId: 'ParekheTradeMarket02' });
     setImageFile(null);
     setImagePreview(null);
     setErrors({ title: false, category: false, siteId: false });
@@ -104,22 +104,22 @@ const Products = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation with visual feedback (Expert UI Requirement)
     const newErrors = {
-        title: !formData.title,
-        category: !formData.category,
-        siteId: !formData.siteId
+      title: !formData.title,
+      category: !formData.category,
+      siteId: !formData.siteId
     };
     setErrors(newErrors);
 
     if (newErrors.title || newErrors.category || newErrors.siteId) {
-        return; // Stop and show error states
+      return; // Stop and show error states
     }
 
     if (!editingProduct && !imageFile) {
-        alert("Hero image is mandatory for new project profile.");
-        return;
+      alert("Hero image is mandatory for new project profile.");
+      return;
     }
 
     const data = new FormData();
@@ -152,36 +152,36 @@ const Products = () => {
         </div>
 
         <div className="flex items-center gap-4">
-            <div className="relative group min-w-[200px]">
-                <select 
-                    value={selectedWebsite}
-                    onChange={(e) => setSelectedWebsite(e.target.value)}
-                    className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
-                >
-                    {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
-                </select>
-                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-            </div>
-            <button 
-                onClick={handleAdd}
-                className="premium-btn-primary gap-2"
+          <div className="relative group min-w-[200px]">
+            <select
+              value={selectedWebsite}
+              onChange={(e) => setSelectedWebsite(e.target.value)}
+              className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
             >
-                <PlusIcon className="h-5 w-5" />
-                Enroll New Product
-            </button>
+              {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
+            </select>
+            <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+          </div>
+          <button
+            onClick={handleAdd}
+            className="premium-btn-primary gap-2"
+          >
+            <PlusIcon className="h-5 w-5" />
+            Enroll New Product
+          </button>
         </div>
       </div>
 
       {/* Stats Quick Links (Clean & Professional) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm hover:border-indigo-200 transition-all">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Listings</p>
-              <h4 className="text-2xl font-black text-slate-900">{products.length}</h4>
-          </div>
-          <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm hover:border-indigo-200 transition-all">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Global Categories</p>
-              <h4 className="text-2xl font-black text-slate-900">{[...new Set(products.map(p => p.category))].length}</h4>
-          </div>
+        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm hover:border-indigo-200 transition-all">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Listings</p>
+          <h4 className="text-2xl font-black text-slate-900">{products.length}</h4>
+        </div>
+        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm hover:border-indigo-200 transition-all">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Global Categories</p>
+          <h4 className="text-2xl font-black text-slate-900">{[...new Set(products.map(p => p.category))].length}</h4>
+        </div>
       </div>
 
       {/* Main Table Grid */}
@@ -216,15 +216,15 @@ const Products = () => {
                   <tr key={prod._id} className="group hover:bg-slate-50/50 transition-colors">
                     <td className="px-8 py-4 whitespace-nowrap">
                       <div className="relative h-14 w-14 rounded-xl overflow-hidden shadow-sm border border-slate-200">
-                        <img 
-                          src={`http://localhost:5000/${prod.image}`} 
-                          alt={prod.title} 
+                        <img
+                          src={`http://localhost:5000/${prod.image}`}
+                          alt={prod.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>
                     </td>
                     <td className="px-8 py-4 whitespace-nowrap">
-                        <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{prod.title}</span>
+                      <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{prod.title}</span>
                     </td>
                     <td className="px-8 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
@@ -268,12 +268,12 @@ const Products = () => {
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                    {editingProduct ? 'Update Asset' : 'Enroll Asset'}
+                  {editingProduct ? 'Update Asset' : 'Enroll Asset'}
                 </h3>
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Configuration Profile</p>
               </div>
-              <button 
-                onClick={() => setShowModal(false)} 
+              <button
+                onClick={() => setShowModal(false)}
                 className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all shadow-sm"
               >
                 <XMarkIcon className="w-6 h-6" />
@@ -287,9 +287,9 @@ const Products = () => {
                   {imagePreview ? (
                     <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-lg">
                       <img src={imagePreview} className="w-full h-full object-cover" alt="Preview" />
-                      <button 
-                        type="button" 
-                        onClick={() => {setImageFile(null); setImagePreview(null);}}
+                      <button
+                        type="button"
+                        onClick={() => { setImageFile(null); setImagePreview(null); }}
                         className="absolute top-4 right-4 bg-white/90 p-2 rounded-xl text-rose-500 shadow-xl"
                       >
                         <XMarkIcon className="w-5 h-5" />
@@ -308,61 +308,61 @@ const Products = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="md:col-span-2">
-                        <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.title ? 'text-rose-500' : 'text-slate-500'}`}>
-                            Product Title {errors.title && '— Required Field'}
-                        </label>
-                        <input
-                            type="text"
-                            value={formData.title}
-                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            className={`clean-input font-bold text-slate-900 ${errors.title ? 'error' : ''}`}
-                            placeholder="Identify this listing..."
-                        />
-                    </div>
+                  <div className="md:col-span-2">
+                    <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.title ? 'text-rose-500' : 'text-slate-500'}`}>
+                      Product Title {errors.title && '— Required Field'}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className={`clean-input font-bold text-slate-900 ${errors.title ? 'error' : ''}`}
+                      placeholder="Identify this listing..."
+                    />
+                  </div>
 
-                    <div>
-                        <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.category ? 'text-rose-500' : 'text-slate-500'}`}>
-                            Classification {errors.category && '— Required'}
-                        </label>
-                        <div className="relative group">
-                            <select
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className={`clean-input font-bold text-slate-900 pr-10 appearance-none ${errors.category ? 'error' : ''}`}
-                            >
-                                <option value="">Select Category</option>
-                                {categories.map((cat) => (
-                                    <option key={cat._id} value={cat.name}>{cat.name}</option>
-                                ))}
-                            </select>
-                            <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-                        </div>
-                        {categories.length === 0 && (
-                            <div className="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-xl flex gap-3">
-                                <ExclamationTriangleIcon className="h-4 w-4 text-amber-500 shrink-0" />
-                                <p className="text-[10px] font-bold text-amber-700 leading-tight">No classifications found for this platform. Sync required.</p>
-                            </div>
-                        )}
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.category ? 'text-rose-500' : 'text-slate-500'}`}>
+                      Classification {errors.category && '— Required'}
+                    </label>
+                    <div className="relative group">
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className={`clean-input font-bold text-slate-900 pr-10 appearance-none ${errors.category ? 'error' : ''}`}
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((cat) => (
+                          <option key={cat._id} value={cat.name}>{cat.name}</option>
+                        ))}
+                      </select>
+                      <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
                     </div>
+                    {categories.length === 0 && (
+                      <div className="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-xl flex gap-3">
+                        <ExclamationTriangleIcon className="h-4 w-4 text-amber-500 shrink-0" />
+                        <p className="text-[10px] font-bold text-amber-700 leading-tight">No classifications found for this platform. Sync required.</p>
+                      </div>
+                    )}
+                  </div>
 
-                    <div>
-                        <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.siteId ? 'text-rose-500' : 'text-slate-500'}`}>
-                            Target Platform {errors.siteId && '— Selection Needed'}
-                        </label>
-                        <div className="relative group">
-                            <select
-                                value={formData.siteId}
-                                onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
-                                className={`clean-input font-bold text-slate-900 pr-10 appearance-none ${errors.siteId ? 'error' : ''}`}
-                            >
-                                {websites.filter(s => s.id !== 'all').map((site) => (
-                                    <option key={site.id} value={site.id}>{site.name}</option>
-                                ))}
-                            </select>
-                            <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-                        </div>
+                  <div>
+                    <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.siteId ? 'text-rose-500' : 'text-slate-500'}`}>
+                      Target Platform {errors.siteId && '— Selection Needed'}
+                    </label>
+                    <div className="relative group">
+                      <select
+                        value={formData.siteId}
+                        onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
+                        className={`clean-input font-bold text-slate-900 pr-10 appearance-none ${errors.siteId ? 'error' : ''}`}
+                      >
+                        {websites.filter(s => s.id !== 'all').map((site) => (
+                          <option key={site.id} value={site.id}>{site.name}</option>
+                        ))}
+                      </select>
+                      <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
                     </div>
+                  </div>
                 </div>
               </div>
 
