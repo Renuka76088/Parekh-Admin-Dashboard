@@ -12,7 +12,7 @@ import MediaEvents from './components/MediaEvents';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/adminparekh">
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
