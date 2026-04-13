@@ -29,6 +29,20 @@ export const formsApi = {
   getContactSubmissions: () => api.get('/contact'),
   getBulkSellers: () => api.get('/bulk'),
   getMembershipEnquiries: () => api.get('/membership'),
+  delete: (type, id) => {
+    const endpoints = {
+      trade: '/trade-enquiry',
+      quotation: '/quotation',
+      auction: '/auction',
+      appointment: '/appointment',
+      buyer: '/etrade/submissions',
+      seller: '/etrade/submissions',
+      contact: '/contact',
+      bulk: '/bulk',
+      membership: '/membership'
+    };
+    return api.delete(`${endpoints[type]}/${id}`);
+  }
 };
 
 export const productApi = {

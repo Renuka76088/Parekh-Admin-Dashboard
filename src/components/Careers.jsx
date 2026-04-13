@@ -106,14 +106,15 @@ const Careers = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div>
-          <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">Human Capital</span>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Talent Acquisition</h2>
-          <p className="mt-1 text-slate-500 font-medium">Engineer and manage recruitment opportunities across the ecosystem.</p>
-        </div>
+    <>
+      <div className="max-w-7xl mx-auto space-y-8 animate-fade-in-up">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div>
+            <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">Human Capital</span>
+            <h2 className="text-4xl font-black text-slate-900 tracking-tight">Talent Acquisition</h2>
+            <p className="mt-1 text-slate-500 font-medium">Engineer and manage recruitment opportunities across the ecosystem.</p>
+          </div>
 
         <div className="flex items-center gap-4">
           <div className="relative group min-w-[200px]">
@@ -200,10 +201,15 @@ const Careers = () => {
         )}
       </div>
 
-      {/* Provisioning Modal */}
+      </div>
+
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10 bg-slate-900/60 backdrop-blur-sm">
-          <div className="w-full max-w-3xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl border border-slate-200 animate-fade-in-up">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
+          {/* Enhanced Backdrop */}
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
+          
+          {/* Modal Container */}
+          <div className="relative w-full max-w-3xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -211,12 +217,12 @@ const Careers = () => {
                 </h3>
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Opportunity Architecture</p>
               </div>
-              <button onClick={() => setShowModal(false)} className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all">
+              <button onClick={() => setShowModal(false)} className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all shadow-sm">
                 <XMarkIcon className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[75vh] overflow-y-auto custom-scrollbar">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="md:col-span-2">
                   <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.title ? 'text-rose-500' : 'text-slate-500'}`}>
@@ -240,10 +246,10 @@ const Careers = () => {
                       type="text"
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      className={`clean-input font-bold text-slate-900 pl-11 ${errors.location ? 'error' : ''}`}
+                      className={`clean-input font-bold text-slate-900 !pl-12 shadow-sm ${errors.location ? 'error' : ''}`}
                       placeholder="Surat, Gujarat"
                     />
-                    <MapPinIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                    <MapPinIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 pointer-events-none group-hover:text-indigo-500 transition-colors" />
                   </div>
                 </div>
 
@@ -254,10 +260,10 @@ const Careers = () => {
                       type="text"
                       value={formData.salary}
                       onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
-                      className="clean-input font-bold text-slate-900 pl-11"
+                      className="clean-input font-bold text-slate-900 !pl-12 shadow-sm"
                       placeholder="e.g. 5L - 8L PA"
                     />
-                    <CurrencyDollarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                    <CurrencyDollarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 pointer-events-none group-hover:text-indigo-500 transition-colors" />
                   </div>
                 </div>
 
@@ -270,10 +276,10 @@ const Careers = () => {
                       type="email"
                       value={formData.contactEmail}
                       onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                      className={`clean-input font-bold text-slate-900 pl-11 ${errors.contactEmail ? 'error' : ''}`}
+                      className={`clean-input font-bold text-slate-900 !pl-12 shadow-sm ${errors.contactEmail ? 'error' : ''}`}
                       placeholder="hr@parekh.com"
                     />
-                    <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                    <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 pointer-events-none group-hover:text-indigo-600 transition-colors" />
                   </div>
                 </div>
 
@@ -298,7 +304,7 @@ const Careers = () => {
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="clean-input h-32 resize-none leading-relaxed font-medium"
+                    className="clean-input h-32 resize-none leading-relaxed font-medium bg-slate-50 border-slate-100"
                     placeholder="Primary responsibilities and role context..."
                   />
                 </div>
@@ -308,7 +314,7 @@ const Careers = () => {
                   <textarea
                     value={formData.requirements}
                     onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-                    className="clean-input h-32 resize-none leading-relaxed font-medium"
+                    className="clean-input h-32 resize-none leading-relaxed font-medium bg-slate-50 border-slate-100"
                     placeholder="Key qualifications and skills..."
                   />
                 </div>
@@ -323,7 +329,7 @@ const Careers = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

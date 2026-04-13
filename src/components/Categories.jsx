@@ -93,80 +93,84 @@ const Categories = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
-      {/* Page Heading */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div>
-          <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">System Taxonomy</span>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Project Classifications</h2>
-          <p className="mt-1 text-slate-500 font-medium">Define and organize product categories across the ecosystem.</p>
+    <>
+      <div className="max-w-7xl mx-auto space-y-8 animate-fade-in-up">
+        {/* Page Heading */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div>
+            <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">System Taxonomy</span>
+            <h2 className="text-4xl font-black text-slate-900 tracking-tight">Project Classifications</h2>
+            <p className="mt-1 text-slate-500 font-medium">Define and organize product categories across the ecosystem.</p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="relative group min-w-[200px]">
+              <select
+                value={selectedWebsite}
+                onChange={(e) => setSelectedWebsite(e.target.value)}
+                className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
+              >
+                {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
+              </select>
+              <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+            </div>
+            <button onClick={handleAdd} className="premium-btn-primary gap-2">
+              <PlusIcon className="h-5 w-5" />
+              New Category
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="relative group min-w-[200px]">
-            <select
-              value={selectedWebsite}
-              onChange={(e) => setSelectedWebsite(e.target.value)}
-              className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
-            >
-              {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
-            </select>
-            <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-          </div>
-          <button onClick={handleAdd} className="premium-btn-primary gap-2">
-            <PlusIcon className="h-5 w-5" />
-            New Category
-          </button>
+        {/* Main Grid View */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {loading ? (
+            <div className="col-span-full py-24 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+              <p className="text-sm font-bold text-slate-500 mt-4">Analyzing Global Taxonomy...</p>
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="col-span-full py-20 text-center">
+              <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
+                <GlobeAltIcon className="w-10 h-10 text-slate-200" />
+              </div>
+              <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Empty Classification View</h4>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Refine filters or add entries</p>
+            </div>
+          ) : (
+            categories.map((cat) => (
+              <div key={cat._id} className="premium-card p-8 group">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <TagIcon className="h-5 w-5" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => handleEdit(cat)} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
+                      <PencilIcon className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => handleDelete(cat._id)} className="p-2 text-slate-400 hover:text-rose-600 transition-colors">
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <h5 className="text-xl font-black text-slate-900 tracking-tight mb-2 group-hover:text-indigo-600 transition-colors uppercase">{cat.name}</h5>
+                <div className="flex items-center justify-between pt-4 border-t border-slate-50 mt-4">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform Target:</span>
+                  <span className="text-[10px] font-black text-indigo-600 uppercase tracking-tighter">
+                    {cat.siteId?.replace('Parekh', '') || 'Global'}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-      </div>
-
-      {/* Main Grid View (More Expert / Professional than tables for simple items) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {loading ? (
-          <div className="col-span-full py-24 text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
-            <p className="text-sm font-bold text-slate-500 mt-4">Analyzing Global Taxonomy...</p>
-          </div>
-        ) : categories.length === 0 ? (
-          <div className="col-span-full py-20 text-center">
-            <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
-              <GlobeAltIcon className="w-10 h-10 text-slate-200" />
-            </div>
-            <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Empty Classification View</h4>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Refine filters or add entries</p>
-          </div>
-        ) : (
-          categories.map((cat) => (
-            <div key={cat._id} className="premium-card p-8 group">
-              <div className="flex justify-between items-start mb-6">
-                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                  <TagIcon className="h-5 w-5" />
-                </div>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEdit(cat)} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
-                    <PencilIcon className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => handleDelete(cat._id)} className="p-2 text-slate-400 hover:text-rose-600 transition-colors">
-                    <TrashIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <h5 className="text-xl font-black text-slate-900 tracking-tight mb-2 group-hover:text-indigo-600 transition-colors">{cat.name}</h5>
-              <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform Target:</span>
-                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-tighter">
-                  {cat.siteId?.replace('Parekh', '') || 'Global'}
-                </span>
-              </div>
-            </div>
-          ))
-        )}
       </div>
 
       {/* Modal Profile Creation */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white shadow-2xl border border-slate-200 animate-fade-in-up">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
+          
+          <div className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl border border-white/20 overflow-hidden flex flex-col animate-scale-in">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -222,7 +226,7 @@ const Categories = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

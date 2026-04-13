@@ -2,8 +2,9 @@ import { useState, useEffect, useMemo } from 'react';
 import {
     EnvelopeIcon, EyeIcon, ClockIcon, FunnelIcon,
     ArrowTopRightOnSquareIcon, MagnifyingGlassIcon,
-    ExclamationCircleIcon
+    ExclamationCircleIcon, TrashIcon, XMarkIcon
 } from '@heroicons/react/24/outline';
+import { useLocation } from 'react-router-dom';
 import { formsApi } from '../utils/api';
 
 const FormsData = () => {
@@ -13,6 +14,9 @@ const FormsData = () => {
     const [selectedSite, setSelectedSite] = useState('All Sites');
     const [searchQuery, setSearchQuery] = useState('');
     const [errors, setErrors] = useState({ site: false, category: false });
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const location = useLocation();
 
     const tabs = [
         { id: 'trade', label: 'Trade Enquiry' },
@@ -74,6 +78,19 @@ const FormsData = () => {
         fetchAllData();
     }, []);
 
+    // Handle incoming notification filters
+    useEffect(() => {
+        if (location.state?.filterType) {
+            const targetLabel = location.state.filterType;
+            const tab = tabs.find(t => t.label === targetLabel || t.id === targetLabel.toLowerCase());
+            if (tab) {
+                setActiveTab(tab.id);
+                // Clear state so it doesn't re-filter on manual tab change later
+                window.history.replaceState({}, document.title);
+            }
+        }
+    }, [location.state, tabs]);
+
     const categoryCounts = useMemo(() => {
         const counts = {};
         tabs.forEach(tab => {
@@ -99,7 +116,7 @@ const FormsData = () => {
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             currentTabData = currentTabData.filter(item =>
-                (item.name || item.traderName || item.visitorName || '').toLowerCase().includes(query) ||
+                (item.name || item.traderName || item.visitorName || item.buyerName || item.sellerName || item.participantName || item.name || item.applicantName || '').toLowerCase().includes(query) ||
                 (item.email || item.emailId || '').toLowerCase().includes(query) ||
                 (item.mobile || item.mobileNo || '').toLowerCase().includes(query)
             );
@@ -112,14 +129,29 @@ const FormsData = () => {
         window.location.href = `mailto:${item.email || item.emailId}`;
     };
 
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this record?')) return;
+        try {
+            setIsDeleting(true);
+            await formsApi.delete(activeTab, id);
+            await fetchAllData();
+        } catch (error) {
+            console.error("Error deleting record:", error);
+            alert("Delete failed. Please try again.");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     return (
-        <div className="space-y-8 animate-fade-in-up">
+        <>
+            <div className="max-w-7xl mx-auto space-y-8 animate-fade-in-up">
             {/* Header & Stats */}
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                 <div>
                     <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">Communications Center</span>
                     <h2 className="text-4xl font-black text-slate-900 tracking-tight">Form Inboxes</h2>
-                    <p className="mt-1 text-slate-500 font-medium">Processing submissons from all 7 Parekh ecosystem platforms.</p>
+                    <p className="mt-1 text-slate-500 font-medium">Processing submissions from all 7 Parekh ecosystem platforms.</p>
                 </div>
 
                 <div className="flex gap-3">
@@ -191,7 +223,7 @@ const FormsData = () => {
                             placeholder="Refine by name, email or phone..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="clean-input pl-11 font-medium bg-slate-50 border-slate-200"
+                            className="clean-input !pl-12 font-medium bg-slate-50 border-slate-200"
                         />
                         <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                     </div>
@@ -282,27 +314,89 @@ const FormsData = () => {
                                                 >
                                                     <EnvelopeIcon className="h-5 w-5" />
                                                 </button>
+                                                <button
+                                                    onClick={() => setSelectedItem(item)}
+                                                    className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all shadow-sm"
+                                                    title="View Full Details"
+                                                >
+                                                    <EyeIcon className="h-5 w-5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(item._id)}
+                                                    disabled={isDeleting}
+                                                    className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm disabled:opacity-50"
+                                                    title="Delete Record"
+                                                >
+                                                    <TrashIcon className="h-5 w-5" />
+                                                </button>
                                                 {(item.gstCertificate || item.proofFile || item.uploadedDocument || (item.kycDocuments && item.kycDocuments[0])) ? (
                                                     <a
-                                                        href={`http://localhost:5000/${item.gstCertificate || item.proofFile || item.uploadedDocument || (item.kycDocuments && item.kycDocuments[0])}`}
+                                                        href={`https://api.parekhchamber.com/${item.gstCertificate || item.proofFile || item.uploadedDocument || (item.kycDocuments && item.kycDocuments[0])}`}
                                                         target="_blank"
                                                         rel="noreferrer"
                                                         className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm"
                                                         title="View Doc"
                                                     >
-                                                        <EyeIcon className="h-5 w-5" />
+                                                        <ArrowTopRightOnSquareIcon className="h-5 w-5" />
                                                     </a>
                                                 ) : null}
                                             </div>
                                         </td>
                                     </tr>
-                                )
-                                ))}
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+            </div>
+
+            {/* Item Details Modal */}
+            {selectedItem && (
+                <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
+                    {/* Enhanced Backdrop */}
+                    <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setSelectedItem(null)} />
+                    
+                    {/* Modal Container */}
+                    <div className="relative w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
+                        <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Submission Details</h3>
+                                <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Platform: {selectedItem.siteId || 'Global'}</p>
+                            </div>
+                            <button 
+                                onClick={() => setSelectedItem(null)}
+                                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                            >
+                                <XMarkIcon className="h-6 w-6 text-slate-500" />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                {Object.entries(selectedItem).map(([key, value]) => {
+                                    if (key === '_id' || key === '__v' || key === 'siteId') return null;
+                                    if (typeof value === 'object' && value !== null) return null;
+                                    return (
+                                        <div key={key} className="space-y-1">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{key.replace(/([A-Z])/g, ' $1').trim()}</p>
+                                            <p className="text-sm font-bold text-slate-900 break-words">{String(value)}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        <div className="px-8 py-6 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+                            <button 
+                                onClick={() => setSelectedItem(null)}
+                                className="px-8 py-3 bg-slate-900 text-white rounded-2xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg"
+                            >
+                                Close View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 

@@ -130,105 +130,113 @@ const MediaEvents = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div>
-          <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">Brand Assets</span>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Media & Events</h2>
-          <p className="mt-1 text-slate-500 font-medium">Coordinate press coverage, awards, and industry exhibitions across the ecosystem.</p>
+    <>
+      <div className="max-w-7xl mx-auto space-y-8 animate-fade-in-up">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div>
+            <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">Brand Assets</span>
+            <h2 className="text-4xl font-black text-slate-900 tracking-tight">Media & Events</h2>
+            <p className="mt-1 text-slate-500 font-medium">Coordinate press coverage, awards, and industry exhibitions across the ecosystem.</p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="relative group min-w-[200px]">
+              <select
+                value={selectedWebsite}
+                onChange={(e) => setSelectedWebsite(e.target.value)}
+                className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
+              >
+                {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
+              </select>
+              <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+            </div>
+            <button onClick={handleAdd} className="premium-btn-primary gap-2">
+              <PlusIcon className="h-5 w-5" />
+              Archive Event
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="relative group min-w-[200px]">
-            <select
-              value={selectedWebsite}
-              onChange={(e) => setSelectedWebsite(e.target.value)}
-              className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
-            >
-              {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
-            </select>
-            <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-          </div>
-          <button onClick={handleAdd} className="premium-btn-primary gap-2">
-            <PlusIcon className="h-5 w-5" />
-            Archive Event
-          </button>
+        {/* Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {loading ? (
+            <div className="col-span-full py-24 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+              <p className="text-sm font-bold text-slate-500 mt-4">Consulting Media Archives...</p>
+            </div>
+          ) : events.length === 0 ? (
+            <div className="col-span-full py-20 text-center">
+              <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
+                <TrophyIcon className="w-10 h-10 text-slate-200" />
+              </div>
+              <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Archive Data Empty</h4>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">No awards or events currently cataloged.</p>
+            </div>
+          ) : (
+            events.map((ev) => (
+              <div key={ev._id} className="premium-card overflow-hidden group flex flex-col hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-500">
+                <div className="aspect-video bg-slate-100 overflow-hidden relative">
+                  <img
+                    src={`https://api.parekhchamber.com/${ev.image}`}
+                    alt={ev.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className="text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest bg-white/90 backdrop-blur-md text-indigo-700 border border-indigo-100 shadow-sm">
+                      {ev.category}
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                    <button onClick={() => handleEdit(ev)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-xl hover:scale-110 transition-transform">
+                      <PencilIcon className="h-6 w-6" />
+                    </button>
+                    <button onClick={() => handleDelete(ev._id)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-rose-500 shadow-xl hover:scale-110 transition-transform">
+                      <TrashIcon className="h-6 w-6" />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-8 pb-10">
+                  <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2 block">{ev.siteId?.replace('Parekh', '')}</span>
+                  <h5 className="text-xl font-black text-slate-900 tracking-tight mb-4 group-hover:text-indigo-600 transition-colors line-clamp-1 leading-tight">
+                    {ev.title}
+                  </h5>
+                  <div className="flex items-center gap-2 pt-4 border-t border-slate-50">
+                    <CalendarIcon className="h-4 w-4 text-slate-400" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+                      {ev.date ? new Date(ev.date).toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' }) : 'Date N/A'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {loading ? (
-          <div className="col-span-full py-24 text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
-            <p className="text-sm font-bold text-slate-500 mt-4">Consulting Media Archives...</p>
-          </div>
-        ) : events.length === 0 ? (
-          <div className="col-span-full py-20 text-center">
-            <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
-              <TrophyIcon className="w-10 h-10 text-slate-200" />
-            </div>
-            <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Archive Data Empty</h4>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">No awards or events currently cataloged.</p>
-          </div>
-        ) : (
-          events.map((ev) => (
-            <div key={ev._id} className="premium-card overflow-hidden group flex flex-col">
-              <div className="aspect-video bg-slate-100 overflow-hidden relative">
-                <img
-                  src={`http://localhost:5000/${ev.image}`}
-                  alt={ev.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest bg-white/90 backdrop-blur-md text-indigo-700 border border-indigo-100 shadow-sm">
-                    {ev.category}
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                  <button onClick={() => handleEdit(ev)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-xl hover:scale-110 transition-transform">
-                    <PencilIcon className="h-6 w-6" />
-                  </button>
-                  <button onClick={() => handleDelete(ev._id)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-rose-500 shadow-xl hover:scale-110 transition-transform">
-                    <TrashIcon className="h-6 w-6" />
-                  </button>
-                </div>
-              </div>
-              <div className="p-8">
-                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2 block">{ev.siteId?.replace('Parekh', '')}</span>
-                <h5 className="text-xl font-black text-slate-900 tracking-tight mb-4 group-hover:text-indigo-600 transition-colors line-clamp-1">
-                  {ev.title}
-                </h5>
-                <div className="flex items-center gap-2 pt-4 border-t border-slate-50">
-                  <CalendarIcon className="h-4 w-4 text-slate-400" />
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                    {ev.date ? new Date(ev.date).toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' }) : 'Date N/A'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Editor Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10 bg-slate-900/60 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl border border-slate-200 animate-fade-in-up">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
+          {/* Enhanced Backdrop */}
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
+          
+          {/* Modal Container */}
+          <div className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                  {editingEvent ? 'Edit Profile' : 'Catalog Event'}
+                  {editingEvent ? 'Refine Profile' : 'Catalog Event'}
                 </h3>
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Media Event Configuration</p>
               </div>
-              <button onClick={() => setShowModal(false)} className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all">
+              <button 
+                onClick={() => setShowModal(false)} 
+                className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all shadow-sm"
+              >
                 <XMarkIcon className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[75vh] overflow-y-auto custom-scrollbar">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
               <div className="space-y-8">
                 <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem] p-4 bg-slate-50 hover:border-indigo-400 transition-colors cursor-pointer group">
                   {imagePreview ? (
@@ -254,7 +262,7 @@ const MediaEvents = () => {
                       type="text"
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className={`clean-input font-bold text-slate-900 ${errors.title ? 'error' : ''}`}
+                      className={`clean-input font-bold text-slate-900 shadow-sm ${errors.title ? 'error' : ''}`}
                       placeholder="Public title of the event..."
                     />
                   </div>
@@ -319,7 +327,7 @@ const MediaEvents = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

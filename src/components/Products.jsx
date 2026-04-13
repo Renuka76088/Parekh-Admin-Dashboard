@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   PlusIcon, TrashIcon, PhotoIcon, XMarkIcon, PencilIcon,
   TagIcon, MagnifyingGlassIcon, ExclamationTriangleIcon,
-  ChevronDownIcon
+  ChevronDownIcon, EyeIcon
 } from '@heroicons/react/24/outline';
 import { productApi, categoryApi } from '../utils/api';
 
@@ -28,6 +29,15 @@ const Products = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({ title: false, category: false, siteId: false });
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewProduct, setPreviewProduct] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openAddModal) {
+      handleAdd();
+    }
+  }, [location.state]);
 
   const fetchProducts = async () => {
     try {
@@ -86,7 +96,7 @@ const Products = () => {
     setEditingProduct(prod);
     setFormData({ title: prod.title, category: prod.category, siteId: prod.siteId });
     setImageFile(null);
-    setImagePreview(`http://localhost:5000/${prod.image}`);
+    setImagePreview(`https://api.parekhchamber.com/${prod.image}`);
     setErrors({ title: false, category: false, siteId: false });
     setShowModal(true);
   };
@@ -100,6 +110,11 @@ const Products = () => {
         alert("Operation aborted. Check server logs.");
       }
     }
+  };
+
+  const handlePreview = (prod) => {
+    setPreviewProduct(prod);
+    setShowPreviewModal(true);
   };
 
   const handleSubmit = async (e) => {
@@ -142,7 +157,8 @@ const Products = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
+    <>
+      <div className="max-w-7xl mx-auto space-y-8 animate-fade-in-up">
       {/* Page Heading Section */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
@@ -217,7 +233,7 @@ const Products = () => {
                     <td className="px-8 py-4 whitespace-nowrap">
                       <div className="relative h-14 w-14 rounded-xl overflow-hidden shadow-sm border border-slate-200">
                         <img
-                          src={`http://localhost:5000/${prod.image}`}
+                          src={`https://api.parekhchamber.com/${prod.image}`}
                           alt={prod.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
@@ -240,14 +256,23 @@ const Products = () => {
                     <td className="px-8 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
+                          onClick={() => handlePreview(prod)}
+                          className="p-2.5 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-xl transition-all shadow-sm border border-emerald-50"
+                          title="Preview Product"
+                        >
+                          <EyeIcon className="w-5 h-5" />
+                        </button>
+                        <button
                           onClick={() => handleEdit(prod)}
                           className="p-2.5 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl transition-all shadow-sm border border-indigo-50"
+                          title="Edit Product"
                         >
                           <PencilIcon className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleDelete(prod._id)}
                           className="p-2.5 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl transition-all shadow-sm border border-rose-50"
+                          title="Delete Product"
                         >
                           <TrashIcon className="w-5 h-5" />
                         </button>
@@ -261,10 +286,15 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Modal Profile Creation */}
+      </div>
+
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10 bg-slate-900/60 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl border border-slate-200 animate-fade-in-up">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
+          {/* Enhanced Backdrop */}
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
+          
+          {/* Modal Container */}
+          <div className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -280,7 +310,7 @@ const Products = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
               <div className="space-y-8">
                 {/* Image Upload Pattern */}
                 <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem] p-4 group transition-colors hover:border-indigo-400 bg-slate-50">
@@ -379,7 +409,78 @@ const Products = () => {
           </div>
         </div>
       )}
-    </div>
+
+      {/* Preview Modal (Expert Snapshot) */}
+      {showPreviewModal && previewProduct && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12">
+          <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-xl animate-fade-in" onClick={() => setShowPreviewModal(false)} />
+          
+          <div className="relative w-full max-w-2xl bg-white rounded-[3rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)] border border-white/20 overflow-hidden animate-scale-in">
+            {/* Hero Image Section */}
+            <div className="relative aspect-video w-full overflow-hidden">
+               <img 
+                 src={`https://api.parekhchamber.com/${previewProduct.image}`} 
+                 className="w-full h-full object-cover transition-transform duration-[2000ms] hover:scale-110" 
+                 alt={previewProduct.title} 
+               />
+               <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
+               
+               <button 
+                 onClick={() => setShowPreviewModal(false)}
+                 className="absolute top-6 right-6 h-12 w-12 flex items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 transition-all active:scale-90"
+               >
+                 <XMarkIcon className="w-6 h-6" />
+               </button>
+
+               <div className="absolute bottom-8 left-10 right-10">
+                 <div className="flex items-center gap-3 mb-3">
+                   <span className="px-3 py-1 bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                     {previewProduct.category}
+                   </span>
+                   <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white/80 text-[10px] font-black uppercase tracking-widest rounded-full border border-white/10">
+                     ID: #{previewProduct._id.slice(-6).toUpperCase()}
+                   </span>
+                 </div>
+                 <h2 className="text-3xl font-black text-white tracking-tight leading-tight">{previewProduct.title}</h2>
+               </div>
+            </div>
+
+            {/* Content Details */}
+            <div className="p-10 bg-slate-50/50">
+               <div className="grid grid-cols-2 gap-8 mb-8">
+                 <div className="space-y-1">
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform Distribution</p>
+                   <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                     <span className="h-2 w-2 rounded-full bg-indigo-500"></span>
+                     {websites.find(w => w.id === previewProduct.siteId)?.name || previewProduct.siteId}
+                   </p>
+                 </div>
+                 <div className="space-y-1">
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Entry Date</p>
+                   <p className="text-sm font-bold text-slate-900">{new Date(previewProduct.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                 </div>
+               </div>
+
+               <div className="flex gap-4">
+                 <button 
+                   onClick={() => { setShowPreviewModal(false); handleEdit(previewProduct); }}
+                   className="flex-1 premium-btn-primary py-4 flex items-center justify-center gap-2"
+                 >
+                   <PencilIcon className="w-4 h-4" />
+                   Modify Profile
+                 </button>
+                 <button 
+                   onClick={() => setShowPreviewModal(false)}
+                   className="px-8 py-4 bg-white border border-slate-200 text-slate-600 font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all shadow-sm"
+                 >
+                   Close
+                 </button>
+               </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { ChartBarIcon, UsersIcon, CubeIcon, DocumentTextIcon, ArrowUpIcon, ArrowDownIcon, GlobeAltIcon, ServerIcon, CircleStackIcon } from '@heroicons/react/24/outline';
-import { formsApi, authorizedPersonApi } from '../utils/api';
+import { useNavigate } from 'react-router-dom';
+import { ChartBarIcon, UsersIcon, DocumentTextIcon, ArrowUpIcon, ArrowDownIcon, GlobeAltIcon, ServerIcon, CircleStackIcon } from '@heroicons/react/24/outline';
+import { formsApi, authorizedPersonApi, productApi, blogApi, careerApi, mediaEventApi } from '../utils/api';
 import api from '../utils/api';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [statsData, setStatsData] = useState({
     totalForms: 0,
     authorities: 0,
@@ -15,6 +17,18 @@ const Dashboard = () => {
     db: 'Checking...',
     api: 'Checking...'
   });
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+
+  const VALID_SITES = [
+    'ParekhChamberofTextile01',
+    'ParekheTradeMarket02',
+    'ParekhSouthernPolyfabrics03',
+    'ParekhLinen04',
+    'ParekhRayon05',
+    'ParekhFabrics06',
+    'ParekhSilk07'
+  ];
 
   useEffect(() => {
     fetchDashboardData();
@@ -26,14 +40,15 @@ const Dashboard = () => {
       const fetchWithCatch = async (apiCall) => {
         try {
           const res = await apiCall();
-          return res.data.data || [];
+          return res.data?.data || res.data || [];
         } catch (e) {
           console.error("API Call failed:", e.config?.url);
           return [];
         }
       };
 
-      const [trade, quot, auc, appt, buyer, seller, contact, bulk, authoritiesRes] = await Promise.all([
+      // Fetch all submissions for Notifications
+      const [trade, quot, auc, appt, buyer, seller, contact, bulk, membership] = await Promise.all([
         fetchWithCatch(formsApi.getTradeEnquiries),
         fetchWithCatch(formsApi.getQuotations),
         fetchWithCatch(formsApi.getAuctions),
@@ -42,25 +57,78 @@ const Dashboard = () => {
         fetchWithCatch(formsApi.getSellerSubmissions),
         fetchWithCatch(formsApi.getContactSubmissions),
         fetchWithCatch(formsApi.getBulkSellers),
-        authorizedPersonApi.list().catch(() => ({ data: { data: [] } })),
+        fetchWithCatch(formsApi.getMembershipEnquiries),
       ]);
 
       const allSubmissions = [
-        ...trade, ...quot, ...auc, ...appt, ...buyer, ...seller, ...contact, ...bulk
-      ];
+        ...trade.map(i => ({ ...i, formType: 'Trade Enquiry' })),
+        ...quot.map(i => ({ ...i, formType: 'Quotation' })),
+        ...auc.map(i => ({ ...i, formType: 'Auction' })),
+        ...appt.map(i => ({ ...i, formType: 'Appointment' })),
+        ...buyer.map(i => ({ ...i, formType: 'Buyer E-Trade' })),
+        ...seller.map(i => ({ ...i, formType: 'Seller E-Trade' })),
+        ...contact.map(i => ({ ...i, formType: 'Contact' })),
+        ...bulk.map(i => ({ ...i, formType: 'Bulk Seller' })),
+        ...membership.map(i => ({ ...i, formType: 'Membership' })),
+      ].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
 
-      const sites = new Set(allSubmissions.map(item => item.siteId).filter(Boolean));
+      // Fetch admin activities
+      const [products, blogs, careers, media, authorities] = await Promise.all([
+        fetchWithCatch(productApi.list),
+        fetchWithCatch(blogApi.list),
+        fetchWithCatch(careerApi.list),
+        fetchWithCatch(mediaEventApi.list),
+        fetchWithCatch(authorizedPersonApi.list),
+      ]);
+
+      const activities = [
+        ...products.map(i => ({ id: i._id, action: `Product: ${i.title || i.name}`, user: 'Admin', time: i.createdAt, type: 'product' })),
+        ...blogs.map(i => ({ id: i._id, action: `Blog: ${i.title}`, user: 'Admin', time: i.createdAt, type: 'blog' })),
+        ...careers.map(i => ({ id: i._id, action: `Career: ${i.title}`, user: 'Admin', time: i.createdAt, type: 'career' })),
+        ...media.map(i => ({ id: i._id, action: `Media: ${i.title}`, user: 'Admin', time: i.createdAt, type: 'blog' })),
+        ...authorities.map(i => ({ id: i._id, action: `Authority: ${i.name}`, user: 'Admin', time: i.createdAt, type: 'authority' })),
+        ...trade.slice(0, 5).map(i => ({ id: i._id, action: `New Enquiry: ${i.name || i.firmName}`, user: 'User', time: i.createdAt, type: 'form' })),
+      ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 8);
+
+      // Filter sites by validity to ensure we show the correct "7 Sites" even if dirty data exists
+      const sites = new Set(
+        allSubmissions
+          .map(item => item.siteId)
+          .filter(siteId => VALID_SITES.includes(siteId))
+      );
+
+      // Unique categories fetched from form data
+      const categories = new Set(allSubmissions.map(item => item.category).filter(Boolean));
 
       setStatsData({
         totalForms: allSubmissions.length,
-        authorities: (authoritiesRes.data?.data || []).length,
+        authorities: (authorities || []).length,
         sitesCount: sites.size,
+        categoriesCount: categories.size || 9, // Fallback to 9 if none found
         loading: false
       });
+
+      setNotifications(allSubmissions.slice(0, 5));
+      setRecentActivities(activities);
+
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
       setStatsData(prev => ({ ...prev, loading: false }));
     }
+  };
+
+  const formatTimeAgo = (date) => {
+    if (!date) return 'Just now';
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return 'Recently';
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - d) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    return d.toLocaleDateString();
   };
 
   const checkSystemStatus = async () => {
@@ -112,7 +180,7 @@ const Dashboard = () => {
     },
     {
       name: 'Form Categories',
-      value: '8',
+      value: statsData.loading ? '...' : statsData.categoriesCount,
       change: 'Optimized',
       changeType: 'increase',
       icon: ChartBarIcon,
@@ -121,13 +189,6 @@ const Dashboard = () => {
     },
   ];
 
-  const recentActivities = [
-    { id: 1, action: 'New tender form submitted', user: 'John Doe', time: '2 hours ago', type: 'form' },
-    { id: 2, action: 'Product category updated', user: 'Admin', time: '4 hours ago', type: 'product' },
-    { id: 3, action: 'New authority added', user: 'Admin', time: '6 hours ago', type: 'authority' },
-    { id: 4, action: 'Blog post published', user: 'Jane Smith', time: '1 day ago', type: 'blog' },
-    { id: 5, action: 'Career opening updated', user: 'Admin', time: '2 days ago', type: 'career' },
-  ];
 
   const getActivityIcon = (type) => {
     switch (type) {
@@ -141,7 +202,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
         <div>
@@ -149,12 +210,7 @@ const Dashboard = () => {
           <p className="mt-1 text-slate-600">Welcome back! Here's what's happening with your admin panel.</p>
         </div>
         <div className="flex items-center space-x-3">
-          <button className="inline-flex items-center px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-sm">
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Export Data
-          </button>
+          {/* Export button removed as per user request */}
         </div>
       </div>
 
@@ -206,7 +262,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-900">{activity.action}</p>
-                  <p className="text-sm text-slate-500">by {activity.user} • {activity.time}</p>
+                  <p className="text-sm text-slate-500">by {activity.user} • {formatTimeAgo(activity.time)}</p>
                 </div>
                 <div className="shrink-0">
                   <button className="text-slate-400 hover:text-slate-600 transition-colors">
@@ -220,7 +276,10 @@ const Dashboard = () => {
           ))}
         </div>
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
-          <button className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
+          <button 
+            onClick={() => navigate('/forms-data')}
+            className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          >
             View all activities →
           </button>
         </div>
@@ -231,19 +290,28 @@ const Dashboard = () => {
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <button className="w-full flex items-center justify-between p-3 bg-linear-to-r from-blue-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-blue-200 transition-all">
+            <button 
+              onClick={() => navigate('/products', { state: { openAddModal: true } })}
+              className="w-full flex items-center justify-between p-3 bg-linear-to-r from-blue-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-blue-200 transition-all"
+            >
               <span className="text-sm font-medium text-blue-700">Add New Product</span>
               <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </button>
-            <button className="w-full flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-green-100 rounded-lg hover:from-green-100 hover:to-green-200 transition-all">
+            <button 
+              onClick={() => navigate('/blogs', { state: { openAddModal: true } })}
+              className="w-full flex items-center justify-between p-3 bg-linear-to-r from-green-50 to-green-100 rounded-lg hover:from-green-100 hover:to-green-200 transition-all"
+            >
               <span className="text-sm font-medium text-green-700">Create Blog Post</span>
               <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </button>
-            <button className="w-full flex items-center justify-between p-3 bg-linear-to-r from-sky-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-sky-200 transition-all">
+            <button 
+              onClick={() => navigate('/authorities', { state: { openAddModal: true } })}
+              className="w-full flex items-center justify-between p-3 bg-linear-to-r from-sky-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-sky-200 transition-all"
+            >
               <span className="text-sm font-medium text-sky-700">Add Authority</span>
               <svg className="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -290,27 +358,24 @@ const Dashboard = () => {
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">Notifications</h3>
           <div className="space-y-3">
-            <div className="flex items-start space-x-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900">New form submission</p>
-                <p className="text-xs text-slate-500">2 minutes ago</p>
+            {notifications.length > 0 ? notifications.map((notif, index) => (
+              <div 
+                key={notif._id || index} 
+                onClick={() => navigate('/forms-data', { state: { filterType: notif.formType, highlightId: notif._id } })}
+                className="flex items-start space-x-3 cursor-pointer hover:bg-slate-50 p-1 rounded transition-colors"
+              >
+                <div className={`w-2 h-2 rounded-full mt-2 ${
+                  notif.formType === 'Trade Enquiry' ? 'bg-blue-500' : 
+                  notif.formType === 'Contact' ? 'bg-orange-500' : 'bg-green-500'
+                }`}></div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-slate-900">{notif.formType}: {notif.name || notif.firmName || 'New Submission'}</p>
+                  <p className="text-xs text-slate-500">{formatTimeAgo(notif.createdAt || notif.date)}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900">System maintenance</p>
-                <p className="text-xs text-slate-500">1 hour ago</p>
-              </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900">Backup completed</p>
-                <p className="text-xs text-slate-500">3 hours ago</p>
-              </div>
-            </div>
+            )) : (
+              <p className="text-sm text-slate-500 italic">No recent notifications</p>
+            )}
           </div>
         </div>
       </div>

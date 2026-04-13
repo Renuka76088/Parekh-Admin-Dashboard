@@ -4,17 +4,70 @@ import {
   HomeIcon, DocumentTextIcon, UserGroupIcon, CubeIcon, 
   TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon, 
   PhotoIcon, Bars3Icon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon,
-  BellIcon, UserCircleIcon
+    BellIcon, UserCircleIcon, ClockIcon
 } from '@heroicons/react/24/outline';
+import { formsApi } from '../utils/api';
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [loadingNotifs, setLoadingNotifs] = useState(false);
   const location = useLocation();
+
+  const fetchNotifications = async () => {
+    try {
+      setLoadingNotifs(true);
+      const fetchWithCatch = async (apiCall) => {
+        try {
+          const res = await apiCall();
+          return res.data?.data || res.data || [];
+        } catch (e) { return []; }
+      };
+
+      const [trade, quot, auc, appt, buyer, seller, contact, bulk, membership] = await Promise.all([
+        fetchWithCatch(formsApi.getTradeEnquiries),
+        fetchWithCatch(formsApi.getQuotations),
+        fetchWithCatch(formsApi.getAuctions),
+        fetchWithCatch(formsApi.getAppointments),
+        fetchWithCatch(formsApi.getBuyerSubmissions),
+        fetchWithCatch(formsApi.getSellerSubmissions),
+        fetchWithCatch(formsApi.getContactSubmissions),
+        fetchWithCatch(formsApi.getBulkSellers),
+        fetchWithCatch(formsApi.getMembershipEnquiries),
+      ]);
+
+      const all = [
+        ...trade.map(i => ({ ...i, type: 'Trade Enquiry' })),
+        ...quot.map(i => ({ ...i, type: 'Quotation' })),
+        ...auc.map(i => ({ ...i, type: 'Auction' })),
+        ...appt.map(i => ({ ...i, type: 'Appointment' })),
+        ...buyer.map(i => ({ ...i, type: 'Buyer E-Trade' })),
+        ...seller.map(i => ({ ...i, type: 'Seller E-Trade' })),
+        ...contact.map(i => ({ ...i, type: 'Contact' })),
+        ...bulk.map(i => ({ ...i, type: 'Bulk Seller' })),
+        ...membership.map(i => ({ ...i, type: 'Membership' })),
+      ].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+
+      setNotifications(all.slice(0, 10));
+    } catch (error) {
+      console.error("Notif Error:", error);
+    } finally {
+      setLoadingNotifs(false);
+    }
+  };
 
   useEffect(() => {
     setSidebarOpen(false);
+    setShowNotifDropdown(false);
   }, [location]);
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000); // Refresh every minute
+    return () => clearInterval(interval);
+  }, []);
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: HomeIcon },
@@ -48,8 +101,8 @@ const Layout = () => {
           {/* Logo Section */}
           <div className="flex h-20 items-center justify-between px-6 border-b border-slate-100">
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl bg-indigo-600 shadow-lg shadow-indigo-200">
-                <span className="text-white font-black text-xl">P</span>
+              <div className="h-14 w-14 shrink-0 flex items-center justify-center rounded-2xl overflow-hidden shadow-sm bg-white">
+                <img src="/adminparekh/logo.png" alt="Logo" className="h-full w-full object-contain p-0.5" />
               </div>
               <span className={`font-black text-xl text-slate-900 tracking-tight transition-opacity duration-300 ${sidebarCollapsed ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
                 Parekh <span className="text-indigo-600 text-sm font-bold uppercase ml-1">Admin</span>
@@ -103,7 +156,6 @@ const Layout = () => {
                 A
               </div>
               <div className={`ml-3 transition-opacity duration-300 ${sidebarCollapsed ? 'hidden' : 'block'}`}>
-                <p className="text-sm font-bold text-slate-900 truncate">Siddharth Parekh</p>
                 <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Super Admin</p>
               </div>
             </div>
@@ -135,11 +187,65 @@ const Layout = () => {
                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Server: Online</span>
             </div>
             
-            <div className="flex items-center gap-3">
-                <button className="p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl relative">
+            <div className="flex items-center gap-3 relative">
+                <button 
+                  onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+                  className={`p-2.5 rounded-xl relative transition-all ${showNotifDropdown ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                >
                     <BellIcon className="h-6 w-6" />
-                    <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                    {notifications.length > 0 && (
+                      <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                    )}
                 </button>
+
+                {showNotifDropdown && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowNotifDropdown(false)}></div>
+                    <div className="absolute right-0 top-full mt-4 w-80 sm:w-96 bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden z-50 animate-scale-in origin-top-right">
+                      <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Recent Activity</h3>
+                        <span className="text-[10px] font-bold text-indigo-600 px-2 py-0.5 bg-indigo-50 rounded-full">LIVE</span>
+                      </div>
+                      <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                        {loadingNotifs && notifications.length === 0 ? (
+                          <div className="p-10 text-center">
+                            <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-indigo-500 border-t-transparent"></div>
+                          </div>
+                        ) : notifications.length === 0 ? (
+                          <div className="p-10 text-center text-slate-400 italic text-sm">No new notifications</div>
+                        ) : (
+                          notifications.map((notif, idx) => (
+                            <Link 
+                              key={notif._id || idx}
+                              to="/forms-data"
+                              state={{ filterType: notif.type, highlightId: notif._id }}
+                              onClick={() => setShowNotifDropdown(false)}
+                              className="flex items-start gap-4 p-5 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
+                            >
+                              <div className="h-10 w-10 shrink-0 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                <DocumentTextIcon className="h-5 w-5" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-slate-900 truncate">New {notif.type}</p>
+                                <p className="text-xs text-slate-500 truncate">{notif.name || notif.firmName || 'Anonymous Sender'}</p>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-1 flex items-center gap-1">
+                                  <ClockIcon className="h-3 w-3" />
+                                  {new Date(notif.createdAt || notif.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                            </Link>
+                          ))
+                        )}
+                      </div>
+                      <Link 
+                        to="/forms-data"
+                        className="block w-full py-4 text-center text-[11px] font-black text-slate-400 hover:text-indigo-600 hover:bg-slate-50 transition-all uppercase tracking-widest border-t border-slate-100"
+                      >
+                        Vew all communications
+                      </Link>
+                    </div>
+                  </>
+                )}
                 <button className="p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl">
                     <UserCircleIcon className="h-6 w-6" />
                 </button>
@@ -148,10 +254,8 @@ const Layout = () => {
         </header>
 
         {/* Scrollable Content Area */}
-        <main className="flex-1 overflow-y-auto custom-scrollbar bg-[#f8fafc] px-6 py-8 lg:px-10">
-          <div className="max-w-7xl mx-auto animate-fade-in-up">
-            <Outlet />
-          </div>
+        <main className="flex-1 overflow-y-auto custom-scrollbar bg-[#f8fafc] px-6 py-8 lg:px-10 relative">
+          <Outlet />
         </main>
       </div>
     </div>
