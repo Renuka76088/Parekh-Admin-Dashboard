@@ -126,7 +126,10 @@ const FormsData = () => {
     }, [data, activeTab, selectedSite, searchQuery]);
 
     const handleEmail = (item) => {
-        window.location.href = `mailto:${item.email || item.emailId}`;
+        const email = item.email || item.emailId || item.contactEmail;
+        if (email) {
+            window.location.href = `mailto:${email}`;
+        }
     };
 
     const handleDelete = async (id) => {
@@ -307,13 +310,15 @@ const FormsData = () => {
                                         </td>
                                         <td className="px-8 py-5 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button
-                                                    onClick={() => handleEmail(item)}
-                                                    className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm"
-                                                    title="Quick Email"
-                                                >
-                                                    <EnvelopeIcon className="h-5 w-5" />
-                                                </button>
+                                                {(item.email || item.emailId || item.contactEmail) && (
+                                                    <button
+                                                        onClick={() => handleEmail(item)}
+                                                        className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm"
+                                                        title="Quick Email"
+                                                    >
+                                                        <EnvelopeIcon className="h-5 w-5" />
+                                                    </button>
+                                                )}
                                                 <button
                                                     onClick={() => setSelectedItem(item)}
                                                     className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all shadow-sm"

@@ -26,7 +26,7 @@ const Careers = () => {
   const [editingCareer, setEditingCareer] = useState(null);
   const [formData, setFormData] = useState({
     title: '', location: '', salary: '',
-    description: '', requirements: '',
+    description: '', experience: '',
     siteId: 'ParekheTradeMarket02', contactEmail: '',
     status: 'active'
   });
@@ -52,7 +52,7 @@ const Careers = () => {
     setEditingCareer(null);
     setFormData({
       title: '', location: '', salary: '',
-      description: '', requirements: '',
+      description: '', experience: '',
       siteId: 'ParekheTradeMarket02', contactEmail: '',
       status: 'active'
     });
@@ -86,6 +86,7 @@ const Careers = () => {
       title: !formData.title,
       location: !formData.location,
       siteId: !formData.siteId,
+      description: !formData.description,
       contactEmail: !formData.contactEmail || !formData.contactEmail.includes('@')
     };
     setErrors(newErrors);
@@ -187,10 +188,13 @@ const Careers = () => {
               </div>
 
               <div className="flex items-center justify-between pt-8 border-t border-slate-100/60">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200/50 shadow-inner">
+                <a 
+                  href={`mailto:${job.contactEmail || job.email}`}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200/50 shadow-inner hover:bg-slate-200 transition-colors"
+                >
                   <EnvelopeIcon className="h-3.5 w-3.5 text-slate-400" />
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{job.contactEmail || job.email}</span>
-                </div>
+                </a>
                 <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${job.status === 'active' || job.status === 'Open' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
                   }`}>
                   {job.status}
@@ -300,11 +304,13 @@ const Careers = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-3 mb-2">Technical Description</label>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.description ? 'text-rose-500' : 'text-slate-500'}`}>
+                    Technical Description {errors.description && '— Required'}
+                  </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="clean-input h-32 resize-none leading-relaxed font-medium bg-slate-50 border-slate-100"
+                    className={`clean-input h-32 resize-none leading-relaxed font-medium bg-slate-50 border-slate-100 ${errors.description ? 'error' : ''}`}
                     placeholder="Primary responsibilities and role context..."
                   />
                 </div>
@@ -312,8 +318,8 @@ const Careers = () => {
                 <div className="md:col-span-2">
                   <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-3 mb-2">Minimum Requirements</label>
                   <textarea
-                    value={formData.requirements}
-                    onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                    value={formData.experience}
+                    onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
                     className="clean-input h-32 resize-none leading-relaxed font-medium bg-slate-50 border-slate-100"
                     placeholder="Key qualifications and skills..."
                   />
