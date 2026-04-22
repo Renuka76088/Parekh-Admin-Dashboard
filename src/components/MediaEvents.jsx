@@ -74,7 +74,7 @@ const MediaEvents = () => {
       siteId: event.siteId
     });
     setImageFile(null);
-    setImagePreview(`http://localhost:5000/${event.image}`);
+    setImagePreview(event.image?.startsWith('http') ? event.image : `https://api.parekhchamber.com/${event.image}`);
     setErrors({});
     setShowModal(true);
   };
@@ -178,7 +178,7 @@ const MediaEvents = () => {
               <div key={ev._id} className="premium-card overflow-hidden group flex flex-col hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-500">
                 <div className="aspect-video bg-slate-100 overflow-hidden relative">
                   <img
-                    src={`https://api.parekhchamber.com/${ev.image}`}
+                    src={ev.image && (ev.image.startsWith('http') ? ev.image : `https://api.parekhchamber.com/${ev.image}`)}
                     alt={ev.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />

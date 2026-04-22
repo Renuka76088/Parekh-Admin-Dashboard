@@ -75,7 +75,8 @@ const Blogs = () => {
     setEditingBlog(blog);
     setFormData({ title: blog.title, content: blog.content, siteId: blog.siteId, status: blog.status });
     setImageFile(null);
-    setImagePreview(`https://api.parekhchamber.com/${blog.thumbnail}`);
+    const imgUrl = blog.thumbnail && (blog.thumbnail.startsWith('http') ? blog.thumbnail : `https://api.parekhchamber.com/${blog.thumbnail}`);
+    setImagePreview(imgUrl);
     setErrors({ title: false, content: false, siteId: false });
     setShowModal(true);
   };
@@ -178,7 +179,7 @@ const Blogs = () => {
               <div key={blog._id} className="premium-card overflow-hidden group flex flex-col sm:flex-row">
                 <div className="w-full sm:w-64 shrink-0 bg-slate-100 overflow-hidden relative border-b sm:border-b-0 sm:border-r border-slate-100">
                   <img
-                    src={`https://api.parekhchamber.com/${blog.thumbnail}`}
+                    src={blog.thumbnail && (blog.thumbnail.startsWith('http') ? blog.thumbnail : `https://api.parekhchamber.com/${blog.thumbnail}`)}
                     alt={blog.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />

@@ -241,7 +241,7 @@ const FormsData = () => {
                             <tr className="border-b border-slate-100 bg-slate-50/50">
                                 <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform</th>
                                 <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Sender Details</th>
-                                <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Inquiry Type</th>
+                                <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Enquiry Type</th>
                                 <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Submission Time</th>
                                 <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
                             </tr>
@@ -287,7 +287,7 @@ const FormsData = () => {
                                         <td className="px-8 py-5">
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-slate-700">
-                                                    {activeTab === 'trade' && (item.enquiryType || 'Trade Inquiry')}
+                                                    {activeTab === 'trade' && (item.enquiryType || 'Trade Enquiry')}
                                                     {activeTab === 'quotation' && (item.quotationType || 'E-Quotation Request')}
                                                     {activeTab === 'bulk' && (item.productType || 'Bulk Fulfillment')}
                                                     {activeTab === 'appointment' && (item.reasonForVisit || 'Official Visit')}
@@ -334,17 +334,21 @@ const FormsData = () => {
                                                 >
                                                     <TrashIcon className="h-5 w-5" />
                                                 </button>
-                                                {(item.gstCertificate || item.proofFile || item.uploadedDocument || (item.kycDocuments && item.kycDocuments[0])) ? (
-                                                    <a
-                                                        href={`https://api.parekhchamber.com/${item.gstCertificate || item.proofFile || item.uploadedDocument || (item.kycDocuments && item.kycDocuments[0])}`}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm"
-                                                        title="View Doc"
-                                                    >
-                                                        <ArrowTopRightOnSquareIcon className="h-5 w-5" />
-                                                    </a>
-                                                ) : null}
+                                                {(item.gstCertificate || item.proofFile || item.uploadedDocument || (item.kycDocuments && item.kycDocuments[0])) ? (() => {
+                                                    const fileVal = item.gstCertificate || item.proofFile || item.uploadedDocument || (item.kycDocuments && item.kycDocuments[0]);
+                                                    const docLink = fileVal && (fileVal.startsWith('http') ? fileVal : `https://api.parekhchamber.com/${fileVal}`);
+                                                    return (
+                                                        <a
+                                                            href={docLink}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                                                            title="View Doc"
+                                                        >
+                                                            <ArrowTopRightOnSquareIcon className="h-5 w-5" />
+                                                        </a>
+                                                    );
+                                                })() : null}
                                             </div>
                                         </td>
                                     </tr>

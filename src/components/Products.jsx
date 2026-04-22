@@ -96,7 +96,8 @@ const Products = () => {
     setEditingProduct(prod);
     setFormData({ title: prod.title, category: prod.category, siteId: prod.siteId });
     setImageFile(null);
-    setImagePreview(`https://api.parekhchamber.com/${prod.image}`);
+    const imgUrl = prod.image && (prod.image.startsWith('http') ? prod.image : `https://api.parekhchamber.com/${prod.image}`);
+    setImagePreview(imgUrl);
     setErrors({ title: false, category: false, siteId: false });
     setShowModal(true);
   };
@@ -233,7 +234,7 @@ const Products = () => {
                     <td className="px-8 py-4 whitespace-nowrap">
                       <div className="relative h-14 w-14 rounded-xl overflow-hidden shadow-sm border border-slate-200">
                         <img
-                          src={`https://api.parekhchamber.com/${prod.image}`}
+                          src={prod.image && (prod.image.startsWith('http') ? prod.image : `https://api.parekhchamber.com/${prod.image}`)}
                           alt={prod.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
@@ -419,7 +420,7 @@ const Products = () => {
             {/* Hero Image Section */}
             <div className="relative aspect-video w-full overflow-hidden">
                <img 
-                 src={`https://api.parekhchamber.com/${previewProduct.image}`} 
+                 src={previewProduct.image && (previewProduct.image.startsWith('http') ? previewProduct.image : `https://api.parekhchamber.com/${previewProduct.image}`)} 
                  className="w-full h-full object-cover transition-transform duration-[2000ms] hover:scale-110" 
                  alt={previewProduct.title} 
                />
