@@ -25,6 +25,7 @@ const Categories = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [formData, setFormData] = useState({ name: '', siteId: 'ParekheTradeMarket02' });
   const [errors, setErrors] = useState({ name: false, siteId: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -80,6 +81,7 @@ const Categories = () => {
     if (newErrors.name || newErrors.siteId) return;
 
     try {
+      setIsSubmitting(true);
       if (editingCategory) {
         await categoryApi.update(editingCategory._id, formData);
       } else {
@@ -89,6 +91,8 @@ const Categories = () => {
       fetchCategories();
     } catch (error) {
       alert("System integrity error: Submission failed.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -218,8 +222,19 @@ const Categories = () => {
               </div>
 
               <div className="pt-4">
-                <button type="submit" className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100">
-                  {editingCategory ? 'Update Classification' : 'Authorize Entry'}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    editingCategory ? 'Update Classification' : 'Authorize Entry'
+                  )}
                 </button>
               </div>
             </form>

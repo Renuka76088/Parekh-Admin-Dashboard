@@ -16,6 +16,7 @@ const Authorities = () => {
   const [errors, setErrors] = useState({ name: false, code: false });
   const [visibleCodes, setVisibleCodes] = useState({});
   const [showPasswordInModal, setShowPasswordInModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -84,6 +85,7 @@ const Authorities = () => {
     if (newErrors.name || newErrors.code) return;
 
     try {
+      setIsSubmitting(true);
       if (editingAuthority) {
         await authorizedPersonApi.update(editingAuthority._id, formData);
       } else {
@@ -93,6 +95,8 @@ const Authorities = () => {
       fetchAuthorities();
     } catch (error) {
       alert("Conflict: Security code may already be in use by another person.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -253,8 +257,19 @@ const Authorities = () => {
               </div>
 
               <div className="pt-4">
-                <button type="submit" className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100">
-                  {editingAuthority ? 'Override Security' : 'Authorize Credentials'}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    editingAuthority ? 'Override Security' : 'Authorize Credentials'
+                  )}
                 </button>
               </div>
             </form>

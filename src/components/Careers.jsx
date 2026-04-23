@@ -31,6 +31,7 @@ const Careers = () => {
     status: 'active'
   });
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchCareers = async () => {
     try {
@@ -94,6 +95,7 @@ const Careers = () => {
     if (Object.values(newErrors).some(v => v)) return;
 
     try {
+      setIsSubmitting(true);
       if (editingCareer) {
         await careerApi.update(editingCareer._id, formData);
       } else {
@@ -103,6 +105,8 @@ const Careers = () => {
       fetchCareers();
     } catch (error) {
       alert("System integrity fault: Career provisioning failed.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -327,8 +331,19 @@ const Careers = () => {
               </div>
 
               <div className="pt-4">
-                <button type="submit" className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100">
-                  {editingCareer ? 'Authorize Vacancy Update' : 'Command Opportunity Post'}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    editingCareer ? 'Authorize Vacancy Update' : 'Command Opportunity Post'
+                  )}
                 </button>
               </div>
             </form>

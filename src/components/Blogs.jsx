@@ -28,6 +28,7 @@ const Blogs = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({ title: false, content: false, siteId: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -118,6 +119,7 @@ const Blogs = () => {
     if (imageFile) data.append('thumbnail', imageFile);
 
     try {
+      setIsSubmitting(true);
       if (editingBlog) {
         await blogApi.update(editingBlog._id, data);
       } else {
@@ -127,6 +129,8 @@ const Blogs = () => {
       fetchBlogs();
     } catch (error) {
       alert("Submission aborted. Database fault or file upload error.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -330,8 +334,19 @@ const Blogs = () => {
               </div>
 
               <div className="pt-4">
-                <button type="submit" className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100">
-                  {editingBlog ? 'Authorize Modification' : 'Command Publication'}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    editingBlog ? 'Authorize Modification' : 'Command Publication'
+                  )}
                 </button>
               </div>
             </form>

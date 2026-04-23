@@ -29,6 +29,7 @@ const Products = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({ title: false, category: false, siteId: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewProduct, setPreviewProduct] = useState(null);
   const location = useLocation();
@@ -145,6 +146,7 @@ const Products = () => {
     if (imageFile) data.append('image', imageFile);
 
     try {
+      setIsSubmitting(true);
       if (editingProduct) {
         await productApi.update(editingProduct._id, data);
       } else {
@@ -154,6 +156,8 @@ const Products = () => {
       fetchProducts();
     } catch (error) {
       alert(`System fault: ${editingProduct ? 'update' : 'entry'} failed.`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -400,10 +404,17 @@ const Products = () => {
               <div className="pt-4 pb-2">
                 <button
                   type="submit"
-                  disabled={categories.length === 0}
-                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-200 disabled:opacity-50 disabled:grayscale"
+                  disabled={categories.length === 0 || isSubmitting}
+                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-200 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3"
                 >
-                  {editingProduct ? 'Authorize Update' : 'Finalize Profile'}
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    editingProduct ? 'Authorize Update' : 'Finalize Profile'
+                  )}
                 </button>
               </div>
             </form>

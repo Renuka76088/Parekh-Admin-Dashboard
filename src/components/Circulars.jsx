@@ -9,6 +9,7 @@ const Circulars = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingCircular, setEditingCircular] = useState(null);
   const [formData, setFormData] = useState({ title: '', content: '', date: '', status: 'Draft' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAdd = () => {
     setEditingCircular(null);
@@ -28,12 +29,19 @@ const Circulars = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (editingCircular) {
-      setCirculars(circulars.map(circ => circ.id === editingCircular.id ? { ...formData, id: editingCircular.id } : circ));
-    } else {
-      setCirculars([...circulars, { ...formData, id: Date.now() }]);
+    try {
+      setIsSubmitting(true);
+      if (editingCircular) {
+        setCirculars(circulars.map(circ => circ.id === editingCircular.id ? { ...formData, id: editingCircular.id } : circ));
+      } else {
+        setCirculars([...circulars, { ...formData, id: Date.now() }]);
+      }
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error submitting circular:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-    setShowModal(false);
   };
 
   return (
@@ -195,8 +203,19 @@ const Circulars = () => {
               </div>
 
               <div className="pt-4 pb-2">
-                <button type="submit" className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100">
-                  {editingCircular ? 'Authorize Directive Update' : 'Initialize Broadcast'}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    editingCircular ? 'Authorize Directive Update' : 'Initialize Broadcast'
+                  )}
                 </button>
               </div>
             </form>

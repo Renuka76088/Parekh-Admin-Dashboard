@@ -29,6 +29,7 @@ const MediaEvents = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchEvents = async () => {
     try {
@@ -117,6 +118,7 @@ const MediaEvents = () => {
     if (imageFile) data.append('image', imageFile);
 
     try {
+      setIsSubmitting(true);
       if (editingEvent) {
         await mediaEventApi.update(editingEvent._id, data);
       } else {
@@ -126,6 +128,8 @@ const MediaEvents = () => {
       fetchEvents();
     } catch (error) {
       alert("Integrity Fault: Upload or data submission failed.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -319,8 +323,19 @@ const MediaEvents = () => {
               </div>
 
               <div className="pt-4 pb-2">
-                <button type="submit" className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100">
-                  {editingEvent ? 'Authorize Update' : 'Command Profile Archive'}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    editingEvent ? 'Authorize Update' : 'Command Profile Archive'
+                  )}
                 </button>
               </div>
             </form>
