@@ -20,12 +20,15 @@ const MediaEvents = () => {
 
   const categories = ['Award', 'Exhibition', 'News', 'Event', 'Other'];
 
-  const [selectedWebsite, setSelectedWebsite] = useState('all');
+  const [user] = useState(JSON.parse(localStorage.getItem('hc_admin_user') || '{}'));
+  const [selectedWebsite, setSelectedWebsite] = useState(user.siteId || 'all');
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
-  const [formData, setFormData] = useState({ title: '', category: 'Event', date: '', siteId: 'ParekheTradeMarket02' });
+  const [formData, setFormData] = useState({ title: '', category: 'Event', date: '', siteId: user.siteId || 'ParekheTradeMarket02' });
+
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -59,8 +62,9 @@ const MediaEvents = () => {
 
   const handleAdd = () => {
     setEditingEvent(null);
-    setFormData({ title: '', category: 'Event', date: '', siteId: 'ParekheTradeMarket02' });
+    setFormData({ title: '', category: 'Event', date: '', siteId: user.siteId || 'ParekheTradeMarket02' });
     setImageFile(null);
+
     setImagePreview(null);
     setErrors({});
     setShowModal(true);
@@ -145,19 +149,21 @@ const MediaEvents = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative group min-w-[200px]">
-              <select
-                value={selectedWebsite}
-                onChange={(e) => setSelectedWebsite(e.target.value)}
-                className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
-              >
-                {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
-              </select>
-              <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-            </div>
+            {user.siteId === 'all' && (
+              <div className="relative group min-w-[200px]">
+                <select
+                  value={selectedWebsite}
+                  onChange={(e) => setSelectedWebsite(e.target.value)}
+                  className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
+                >
+                  {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
+                </select>
+                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+              </div>
+            )}
             <button onClick={handleAdd} className="premium-btn-primary gap-2">
               <PlusIcon className="h-5 w-5" />
-              Archive Event
+              Register Event
             </button>
           </div>
         </div>
@@ -287,23 +293,23 @@ const MediaEvents = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.siteId ? 'text-rose-500' : 'text-slate-500'}`}>
-                      Platform Host
-                    </label>
-                    <div className="relative group">
-                      <select
-                        value={formData.siteId}
-                        onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
-                        className="clean-input font-bold text-slate-900 pr-10 appearance-none shadow-sm"
-                      >
-                        {websites.filter(s => s.id !== 'all').map((site) => (
-                          <option key={site.id} value={site.id}>{site.name}</option>
-                        ))}
-                      </select>
-                      <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+                  {user.siteId === 'all' && (
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-3 mb-2">Publishing Platform</label>
+                      <div className="relative group">
+                        <select
+                          value={formData.siteId}
+                          onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
+                          className="clean-input font-bold text-slate-900 pr-10 appearance-none shadow-sm"
+                        >
+                          {websites.filter(s => s.id !== 'all').map((site) => (
+                            <option key={site.id} value={site.id}>{site.name}</option>
+                          ))}
+                        </select>
+                        <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="md:col-span-2">
                     <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.date ? 'text-rose-500' : 'text-slate-500'}`}>
@@ -314,9 +320,8 @@ const MediaEvents = () => {
                         type="date"
                         value={formData.date}
                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        className={`clean-input font-bold text-slate-900 pl-11 shadow-sm ${errors.date ? 'error' : ''}`}
+                        className={`clean-input font-bold text-slate-900 shadow-sm ${errors.date ? 'error' : ''}`}
                       />
-                      <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 pointer-events-none group-hover:text-indigo-600 transition-colors" />
                     </div>
                   </div>
                 </div>

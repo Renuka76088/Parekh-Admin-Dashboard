@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import FormsData from './components/FormsData';
@@ -9,12 +9,22 @@ import Careers from './components/Careers';
 import Circulars from './components/Circulars';
 import Blogs from './components/Blogs';
 import MediaEvents from './components/MediaEvents';
+import Login from './components/Login';
+
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('hc_admin_token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
 
 function App() {
   return (
     <Router basename="/adminparekh">
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="forms-data" element={<FormsData />} />
           <Route path="authorities" element={<Authorities />} />

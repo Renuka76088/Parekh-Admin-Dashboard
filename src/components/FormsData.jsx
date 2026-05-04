@@ -11,24 +11,42 @@ const FormsData = () => {
     const [activeTab, setActiveTab] = useState('trade');
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
-    const [selectedSite, setSelectedSite] = useState('All Sites');
+    const [user] = useState(JSON.parse(localStorage.getItem('hc_admin_user') || '{}'));
+    const [selectedSite, setSelectedSite] = useState(user.siteId === 'all' ? 'All Sites' : user.siteId);
     const [searchQuery, setSearchQuery] = useState('');
     const [errors, setErrors] = useState({ site: false, category: false });
+
     const [selectedItem, setSelectedItem] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const location = useLocation();
 
     const tabs = [
         { id: 'trade', label: 'Trade Enquiry' },
-        { id: 'quotation', label: 'E-Quotation' },
-        { id: 'auction', label: 'E-Auction' },
+        { id: 'quotation', label: 'e-Quotation' },
+        { id: 'auction', label: 'e-Auction' },
         { id: 'appointment', label: 'Appointment' },
-        { id: 'buyer', label: 'E-Buyer' },
-        { id: 'seller', label: 'E-Seller' },
+        { id: 'buyer', label: 'e-Buyer' },
+        { id: 'seller', label: 'e-Seller' },
         { id: 'contact', label: 'Contact Us' },
         { id: 'bulk', label: 'Bulk Seller' },
         { id: 'membership', label: 'Membership Enquiry' },
     ];
+
+    const filteredTabs = tabs.filter(tab => {
+        if (user.siteId === 'all') return true;
+        
+        // e-Buyer and e-Seller only for e-Trade Market
+        if (tab.id === 'buyer' || tab.id === 'seller') {
+            return user.siteId === 'ParekheTradeMarket02';
+        }
+        
+        // Membership only for Chamber of Textile
+        if (tab.id === 'membership') {
+            return user.siteId === 'ParekhChamberofTextile01';
+        }
+        
+        return true;
+    });
 
     const websites = [
         { id: 'All Sites', name: 'All Sites' },
@@ -82,7 +100,7 @@ const FormsData = () => {
     useEffect(() => {
         if (location.state?.filterType) {
             const targetLabel = location.state.filterType;
-            const tab = tabs.find(t => t.label === targetLabel || t.id === targetLabel.toLowerCase());
+            const tab = filteredTabs.find(t => t.label === targetLabel || t.id === targetLabel.toLowerCase());
             if (tab) {
                 setActiveTab(tab.id);
                 // Clear state so it doesn't re-filter on manual tab change later
@@ -93,7 +111,7 @@ const FormsData = () => {
 
     const categoryCounts = useMemo(() => {
         const counts = {};
-        tabs.forEach(tab => {
+        filteredTabs.forEach(tab => {
             const records = data[tab.id] || [];
             if (selectedSite === 'All Sites') {
                 counts[tab.id] = records.length;
@@ -154,8 +172,9 @@ const FormsData = () => {
                 <div>
                     <span className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2 block">Communications Center</span>
                     <h2 className="text-4xl font-black text-slate-900 tracking-tight">Form Inboxes</h2>
-                    <p className="mt-1 text-slate-500 font-medium">Processing submissions from all 7 Parekh ecosystem platforms.</p>
+                    <p className="mt-1 text-slate-500 font-medium">Processing submissions from {user.siteId === 'all' ? 'all 7 Parekh ecosystem platforms' : 'your platform'}.</p>
                 </div>
+
 
                 <div className="flex gap-3">
                     <div className="px-6 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
@@ -192,7 +211,7 @@ const FormsData = () => {
                             onChange={(e) => setActiveTab(e.target.value)}
                             className={`clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm ${errors.category ? 'error' : ''}`}
                         >
-                            {tabs.map(tab => (
+                            {filteredTabs.map(tab => (
                                 <option key={tab.id} value={tab.id}>{tab.label} ({categoryCounts[tab.id]})</option>
                             ))}
                         </select>
@@ -200,33 +219,35 @@ const FormsData = () => {
                     </div>
                 </div>
 
-                <div className="md:col-span-4">
-                    <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.site ? 'text-rose-500' : 'text-slate-400'}`}>
-                        Source Website {errors.site && <span className="ml-2">— Selection Missing</span>}
-                    </label>
-                    <div className="relative group">
-                        <select
-                            value={selectedSite}
-                            onChange={(e) => setSelectedSite(e.target.value)}
-                            className={`clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm ${errors.site ? 'error' : ''}`}
-                        >
-                            {websites.map(site => (
-                                <option key={site.id} value={site.id}>{site.name}</option>
-                            ))}
-                        </select>
-                        <ArrowTopRightOnSquareIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-500 transition-colors" />
+                {user.siteId === 'all' && (
+                    <div className="md:col-span-4">
+                        <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.site ? 'text-rose-500' : 'text-slate-400'}`}>
+                            Source Website {errors.site && <span className="ml-2">— Selection Missing</span>}
+                        </label>
+                        <div className="relative group">
+                            <select
+                                value={selectedSite}
+                                onChange={(e) => setSelectedSite(e.target.value)}
+                                className={`clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm ${errors.site ? 'error' : ''}`}
+                            >
+                                {websites.map(site => (
+                                    <option key={site.id} value={site.id}>{site.name}</option>
+                                ))}
+                            </select>
+                            <ArrowTopRightOnSquareIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-500 transition-colors" />
+                        </div>
                     </div>
-                </div>
+                )}
 
-                <div className="md:col-span-4">
+                <div className={user.siteId === 'all' ? "md:col-span-4" : "md:col-span-8"}>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">Search Records</label>
-                    <div className="relative">
+                    <div className="relative w-full">
                         <input
                             type="text"
                             placeholder="Refine by name, email or phone..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="clean-input !pl-12 font-medium bg-slate-50 border-slate-200"
+                            className="clean-input !pl-12 font-medium bg-slate-50 border-slate-200 w-full"
                         />
                         <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                     </div>
@@ -288,7 +309,7 @@ const FormsData = () => {
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-slate-700">
                                                     {activeTab === 'trade' && (item.enquiryType || 'Trade Enquiry')}
-                                                    {activeTab === 'quotation' && (item.quotationType || 'E-Quotation Request')}
+                                                    {activeTab === 'quotation' && (item.quotationType || 'e-Quotation Request')}
                                                     {activeTab === 'bulk' && (item.productType || 'Bulk Fulfillment')}
                                                     {activeTab === 'appointment' && (item.reasonForVisit || 'Official Visit')}
                                                     {activeTab === 'buyer' && (item.categoryOfBusiness || 'Procurement')}
@@ -303,7 +324,7 @@ const FormsData = () => {
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-900 rounded-xl text-[10px] font-black">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-900 rounded-xl text-[10px] font-black whitespace-nowrap">
                                                 <ClockIcon className="h-3 w-3 text-slate-400" />
                                                 {item.createdAt ? new Date(item.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) : 'Archive'}
                                             </div>
@@ -388,7 +409,19 @@ const FormsData = () => {
                                     return (
                                         <div key={key} className="space-y-1">
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{key.replace(/([A-Z])/g, ' $1').trim()}</p>
-                                            <p className="text-sm font-bold text-slate-900 break-words">{String(value)}</p>
+                                            {typeof value === 'string' && (value.startsWith('http') || value.includes('cloudinary.com')) ? (
+                                                <a 
+                                                    href={value} 
+                                                    target="_blank" 
+                                                    rel="noreferrer"
+                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors border border-indigo-100"
+                                                >
+                                                    <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+                                                    View Document
+                                                </a>
+                                            ) : (
+                                                <p className="text-sm font-bold text-slate-900 break-words">{String(value)}</p>
+                                            )}
                                         </div>
                                     );
                                 })}

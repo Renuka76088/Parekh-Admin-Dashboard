@@ -4,9 +4,11 @@ import {
   HomeIcon, DocumentTextIcon, UserGroupIcon, CubeIcon, 
   TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon, 
   PhotoIcon, Bars3Icon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon,
-    BellIcon, UserCircleIcon, ClockIcon
+    BellIcon, UserCircleIcon, ClockIcon, ArrowRightOnRectangleIcon, Cog6ToothIcon,
+    EyeIcon, EyeSlashIcon
 } from '@heroicons/react/24/outline';
-import { formsApi } from '../utils/api';
+import { formsApi, authApi } from '../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -14,7 +16,61 @@ const Layout = () => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [loadingNotifs, setLoadingNotifs] = useState(false);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('hc_admin_user') || '{}'));
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [profileForm, setProfileForm] = useState({ username: user.username, password: '' });
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('hc_admin_token');
+    localStorage.removeItem('hc_admin_user');
+    navigate('/login');
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    setUpdateLoading(true);
+    try {
+      const res = await authApi.updateProfile(profileForm);
+      if (res.data.success) {
+        alert("Profile updated successfully!");
+        setUser({ ...user, username: profileForm.username });
+        localStorage.setItem('hc_admin_user', JSON.stringify({ ...user, username: profileForm.username }));
+        setShowSettingsModal(false);
+        setProfileForm({ ...profileForm, password: '' });
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to update profile");
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
+  const siteNames = {
+    'ParekhChamberofTextile01': 'Parekh Chamber of Textile',
+    'ParekheTradeMarket02': 'Parekh e-Trade Market',
+    'ParekhSouthernPolyfabrics03': 'Parekh Southern Polyfabrics',
+    'ParekhLinen04': 'Parekh Linen',
+    'ParekhRayon05': 'Parekh Rayon',
+    'ParekhFabrics06': 'Parekh Fabrics',
+    'ParekhSilk07': 'Parekh Silk',
+  };
+
+  const currentSiteName = siteNames[user.siteId] || 'Admin';
+
+  const getLogo = () => {
+    const siteId = user.siteId || '';
+    const sequence = siteId.slice(-2);
+    const num = parseInt(sequence);
+    if (num >= 1 && num <= 7) {
+      return `/adminparekh/images/${num}.png`;
+    }
+    return "/adminparekh/logo.png";
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -38,17 +94,22 @@ const Layout = () => {
         fetchWithCatch(formsApi.getMembershipEnquiries),
       ]);
 
-      const all = [
+      let all = [
         ...trade.map(i => ({ ...i, type: 'Trade Enquiry' })),
-        ...quot.map(i => ({ ...i, type: 'Quotation' })),
-        ...auc.map(i => ({ ...i, type: 'Auction' })),
+        ...quot.map(i => ({ ...i, type: 'e-Quotation' })),
+        ...auc.map(i => ({ ...i, type: 'e-Auction' })),
         ...appt.map(i => ({ ...i, type: 'Appointment' })),
-        ...buyer.map(i => ({ ...i, type: 'Buyer E-Trade' })),
-        ...seller.map(i => ({ ...i, type: 'Seller E-Trade' })),
+        ...buyer.map(i => ({ ...i, type: 'Buyer e-Trade' })),
+        ...seller.map(i => ({ ...i, type: 'Seller e-Trade' })),
         ...contact.map(i => ({ ...i, type: 'Contact' })),
         ...bulk.map(i => ({ ...i, type: 'Bulk Seller' })),
         ...membership.map(i => ({ ...i, type: 'Membership' })),
       ].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+
+      // Filter by siteId
+      if (user.siteId && user.siteId !== 'all') {
+        all = all.filter(item => item.siteId === user.siteId);
+      }
 
       setNotifications(all.slice(0, 10));
     } catch (error) {
@@ -81,6 +142,22 @@ const Layout = () => {
     { name: 'Media Events', href: '/media-events', icon: PhotoIcon },
   ];
 
+  const filteredNavigation = navigation.filter(item => {
+    // Restrict Authorities module to specific sites only
+    if (item.name === 'Authorities') {
+      return (
+        user.siteId === 'all' || 
+        user.siteId === 'ParekhChamberofTextile01' || 
+        user.siteId === 'ParekheTradeMarket02'
+      );
+    }
+
+    if (user.siteId === 'ParekhChamberofTextile01') {
+      if (item.name === 'Products & Services' || item.name === 'Categories') return false;
+    }
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
       {/* Mobile Overlay */}
@@ -102,10 +179,10 @@ const Layout = () => {
           <div className="flex h-20 items-center justify-between px-6 border-b border-slate-100">
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="h-14 w-14 shrink-0 flex items-center justify-center rounded-2xl overflow-hidden shadow-sm bg-white">
-                <img src="/adminparekh/logo.png" alt="Logo" className="h-full w-full object-contain p-0.5" />
+                <img src={getLogo()} alt="Logo" className="h-full w-full object-contain p-0.5" />
               </div>
               <span className={`font-black text-xl text-slate-900 tracking-tight transition-opacity duration-300 ${sidebarCollapsed ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
-                Parekh <span className="text-indigo-600 text-sm font-bold uppercase ml-1">Admin</span>
+                {currentSiteName.split(' ')[0]} <span className="text-indigo-600 text-sm font-bold uppercase ml-1">Admin</span>
               </span>
             </div>
             <button 
@@ -118,7 +195,7 @@ const Layout = () => {
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1.5 custom-scrollbar">
-            {navigation.map((item) => {
+            {filteredNavigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link
@@ -149,16 +226,16 @@ const Layout = () => {
             })}
           </nav>
 
-          {/* User Profile */}
           <div className="p-4 border-t border-slate-100">
-            <div className={`p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors flex items-center overflow-hidden ${sidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="h-10 w-10 shrink-0 rounded-full border-2 border-white shadow-sm flex items-center justify-center bg-indigo-100 text-indigo-700 font-black">
-                A
-              </div>
+            <button 
+              onClick={handleLogout}
+              className={`w-full p-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors flex items-center overflow-hidden ${sidebarCollapsed ? 'justify-center' : ''}`}
+            >
+              <ArrowRightOnRectangleIcon className="h-6 w-6 shrink-0" />
               <div className={`ml-3 transition-opacity duration-300 ${sidebarCollapsed ? 'hidden' : 'block'}`}>
-                <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Super Admin</p>
+                <p className="text-[11px] font-black uppercase tracking-wider">Logout System</p>
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </aside>
@@ -227,7 +304,7 @@ const Layout = () => {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-bold text-slate-900 truncate">New {notif.type}</p>
-                                <p className="text-xs text-slate-500 truncate">{notif.name || notif.firmName || 'Anonymous Sender'}</p>
+                                <p className="text-xs text-slate-500 truncate">{notif.name || notif.firmName || notif.traderName || notif.visitorName || notif.buyerName || notif.sellerName || 'Anonymous Sender'}</p>
                                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-1 flex items-center gap-1">
                                   <ClockIcon className="h-3 w-3" />
                                   {new Date(notif.createdAt || notif.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -241,17 +318,106 @@ const Layout = () => {
                         to="/forms-data"
                         className="block w-full py-4 text-center text-[11px] font-black text-slate-400 hover:text-indigo-600 hover:bg-slate-50 transition-all uppercase tracking-widest border-t border-slate-100"
                       >
-                        Vew all communications
+                        View all communications
                       </Link>
                     </div>
                   </>
                 )}
-                <button className="p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl">
-                    <UserCircleIcon className="h-6 w-6" />
-                </button>
+                
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    className={`p-2.5 rounded-xl transition-all ${showProfileMenu ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:bg-slate-50'}`}
+                  >
+                      <UserCircleIcon className="h-6 w-6" />
+                  </button>
+
+                  {showProfileMenu && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)}></div>
+                      <div className="absolute right-0 top-full mt-4 w-56 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-scale-in origin-top-right py-2">
+                        <div className="px-5 py-3 border-b border-slate-50">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Signed in as</p>
+                          <p className="text-sm font-black text-slate-900 truncate">{user.username}</p>
+                        </div>
+                        <button 
+                          onClick={() => { setShowSettingsModal(true); setShowProfileMenu(false); }}
+                          className="w-full flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
+                        >
+                          <Cog6ToothIcon className="h-4 w-4" />
+                          <span className="font-bold">Account Settings</span>
+                        </button>
+                        <button 
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-5 py-3 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+                        >
+                          <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                          <span className="font-bold">Logout</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
             </div>
           </div>
         </header>
+
+        {/* Settings Modal */}
+        {showSettingsModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowSettingsModal(false)} />
+            <div className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden animate-scale-in">
+              <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+                <h3 className="text-xl font-black text-slate-900 tracking-tight">Account Settings</h3>
+                <button onClick={() => setShowSettingsModal(false)} className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900">
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+              <form onSubmit={handleUpdateProfile} className="p-8 space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4 mb-2">Username</label>
+                  <input
+                    type="text"
+                    value={profileForm.username}
+                    onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
+                    className="clean-input font-bold text-slate-900"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4 mb-2">New Password (leave blank to keep current)</label>
+                  <div className="relative group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={profileForm.password}
+                      onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
+                      className="clean-input font-bold text-slate-900 pr-12"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-indigo-600 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeSlashIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  disabled={updateLoading}
+                  className="w-full premium-btn-primary py-4 shadow-lg shadow-indigo-100 disabled:opacity-70"
+                >
+                  {updateLoading ? 'Updating...' : 'Save Changes'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Scrollable Content Area */}
         <main className="flex-1 overflow-y-auto custom-scrollbar bg-[#f8fafc] px-6 py-8 lg:px-10 relative">

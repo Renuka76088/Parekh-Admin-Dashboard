@@ -8,7 +8,9 @@ import {
 import { authorizedPersonApi } from '../utils/api';
 
 const Authorities = () => {
+  const [user] = useState(JSON.parse(localStorage.getItem('hc_admin_user') || '{}'));
   const [authorities, setAuthorities] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingAuthority, setEditingAuthority] = useState(null);
@@ -28,8 +30,9 @@ const Authorities = () => {
   const fetchAuthorities = async () => {
     try {
       setLoading(true);
-      const res = await authorizedPersonApi.list();
+      const res = await authorizedPersonApi.list(user.siteId);
       setAuthorities(res.data.data || []);
+
     } catch (error) {
       console.error("Fetch Error:", error);
     } finally {
@@ -43,7 +46,8 @@ const Authorities = () => {
 
   const handleAdd = () => {
     setEditingAuthority(null);
-    setFormData({ name: '', code: '' });
+    setFormData({ name: '', code: '', siteId: user.siteId || 'ParekhChamberofTextile01' });
+
     setErrors({ name: false, code: false });
     setShowPasswordInModal(false);
     setShowModal(true);
@@ -51,7 +55,8 @@ const Authorities = () => {
 
   const handleEdit = (auth) => {
     setEditingAuthority(auth);
-    setFormData({ name: auth.name, code: auth.code });
+    setFormData({ name: auth.name, code: auth.code, siteId: auth.siteId });
+
     setErrors({ name: false, code: false });
     setShowPasswordInModal(false);
     setShowModal(true);
@@ -78,11 +83,13 @@ const Authorities = () => {
     // Expert Validation
     const newErrors = {
       name: !formData.name,
-      code: !formData.code || formData.code.length < 4
+      code: !formData.code || formData.code.length < 4,
+      siteId: !formData.siteId
     };
     setErrors(newErrors);
 
-    if (newErrors.name || newErrors.code) return;
+    if (newErrors.name || newErrors.code || newErrors.siteId) return;
+
 
     try {
       setIsSubmitting(true);

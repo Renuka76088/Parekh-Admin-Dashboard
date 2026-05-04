@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChartBarIcon, UsersIcon, DocumentTextIcon, ArrowUpIcon, ArrowDownIcon, GlobeAltIcon, ServerIcon, CircleStackIcon } from '@heroicons/react/24/outline';
-import { formsApi, authorizedPersonApi, productApi, blogApi, careerApi, mediaEventApi } from '../utils/api';
+import { formsApi, authorizedPersonApi, productApi, blogApi, careerApi, mediaEventApi, categoryApi } from '../utils/api';
 import api from '../utils/api';
 
 const Dashboard = () => {
@@ -19,6 +19,7 @@ const Dashboard = () => {
   });
   const [recentActivities, setRecentActivities] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [user] = useState(JSON.parse(localStorage.getItem('hc_admin_user') || '{}'));
 
   const VALID_SITES = [
     'ParekhChamberofTextile01',
@@ -60,35 +61,61 @@ const Dashboard = () => {
         fetchWithCatch(formsApi.getMembershipEnquiries),
       ]);
 
-      const allSubmissions = [
+      let allSubmissions = [
         ...trade.map(i => ({ ...i, formType: 'Trade Enquiry' })),
-        ...quot.map(i => ({ ...i, formType: 'Quotation' })),
-        ...auc.map(i => ({ ...i, formType: 'Auction' })),
+        ...quot.map(i => ({ ...i, formType: 'e-Quotation' })),
+        ...auc.map(i => ({ ...i, formType: 'e-Auction' })),
         ...appt.map(i => ({ ...i, formType: 'Appointment' })),
-        ...buyer.map(i => ({ ...i, formType: 'Buyer E-Trade' })),
-        ...seller.map(i => ({ ...i, formType: 'Seller E-Trade' })),
+        ...buyer.map(i => ({ ...i, formType: 'Buyer e-Trade' })),
+        ...seller.map(i => ({ ...i, formType: 'Seller e-Trade' })),
         ...contact.map(i => ({ ...i, formType: 'Contact' })),
         ...bulk.map(i => ({ ...i, formType: 'Bulk Seller' })),
         ...membership.map(i => ({ ...i, formType: 'Membership' })),
       ].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
 
+      // Filter by siteId if user is not a super admin
+      if (user.siteId && user.siteId !== 'all') {
+        allSubmissions = allSubmissions.filter(item => item.siteId === user.siteId);
+      }
+
       // Fetch admin activities
-      const [products, blogs, careers, media, authorities] = await Promise.all([
+      const [products, blogs, careers, media, authorities, categoriesData] = await Promise.all([
         fetchWithCatch(productApi.list),
         fetchWithCatch(blogApi.list),
         fetchWithCatch(careerApi.list),
         fetchWithCatch(mediaEventApi.list),
         fetchWithCatch(authorizedPersonApi.list),
+        fetchWithCatch(categoryApi.list),
       ]);
 
-      const activities = [
-        ...products.map(i => ({ id: i._id, action: `Product: ${i.title || i.name}`, user: 'Admin', time: i.createdAt, type: 'product' })),
-        ...blogs.map(i => ({ id: i._id, action: `Blog: ${i.title}`, user: 'Admin', time: i.createdAt, type: 'blog' })),
-        ...careers.map(i => ({ id: i._id, action: `Career: ${i.title}`, user: 'Admin', time: i.createdAt, type: 'career' })),
-        ...media.map(i => ({ id: i._id, action: `Media: ${i.title}`, user: 'Admin', time: i.createdAt, type: 'blog' })),
-        ...authorities.map(i => ({ id: i._id, action: `Authority: ${i.name}`, user: 'Admin', time: i.createdAt, type: 'authority' })),
-        ...trade.slice(0, 5).map(i => ({ id: i._id, action: `New Enquiry: ${i.name || i.firmName}`, user: 'User', time: i.createdAt, type: 'form' })),
-      ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 8);
+      let activities = [
+        ...products.map(i => ({ id: i._id, action: `Product: ${i.title || i.name || 'Untitled'}`, user: 'Admin', time: i.createdAt, type: 'product', siteId: i.siteId })),
+        ...blogs.map(i => ({ id: i._id, action: `Blog: ${i.title || 'Untitled'}`, user: 'Admin', time: i.createdAt, type: 'blog', siteId: i.siteId })),
+        ...categoriesData.map(i => ({ id: i._id, action: `Category: ${i.name || 'Untitled'}`, user: 'Admin', time: i.createdAt, type: 'category', siteId: i.siteId })),
+        ...careers.map(i => ({ id: i._id, action: `Career: ${i.title || 'Position'}`, user: 'Admin', time: i.createdAt, type: 'career', siteId: i.siteId })),
+        ...media.map(i => ({ id: i._id, action: `Media: ${i.title || 'Event'}`, user: 'Admin', time: i.createdAt, type: 'blog', siteId: i.siteId })),
+        ...authorities.map(i => ({ id: i._id, action: `Authority: ${i.name || 'User'}`, user: 'Admin', time: i.createdAt, type: 'authority', siteId: i.siteId })),
+        ...allSubmissions.slice(0, 10).map(i => ({ 
+          id: i._id, 
+          action: `New ${i.formType}: ${i.name || i.firmName || i.traderName || i.visitorName || i.buyerName || i.sellerName || 'Anonymous'}`, 
+          user: 'User', 
+          time: i.createdAt || i.date, 
+          type: 'form',
+          siteId: i.siteId 
+        })),
+      ].sort((a, b) => new Date(b.time) - new Date(a.time));
+
+      // Filter activities by siteId
+      if (user.siteId && user.siteId !== 'all') {
+        activities = activities.filter(act => act.siteId === user.siteId);
+      }
+      
+      activities = activities.slice(0, 8);
+
+      // Filter other stats by siteId
+      const filteredAuthorities = (user.siteId && user.siteId !== 'all') 
+        ? authorities.filter(a => a.siteId === user.siteId) 
+        : authorities;
 
       // Filter sites by validity to ensure we show the correct "7 Sites" even if dirty data exists
       const sites = new Set(
@@ -102,8 +129,8 @@ const Dashboard = () => {
 
       setStatsData({
         totalForms: allSubmissions.length,
-        authorities: (authorities || []).length,
-        sitesCount: sites.size,
+        authorities: (filteredAuthorities || []).length,
+        sitesCount: (user.siteId && user.siteId !== 'all') ? 1 : sites.size,
         categoriesCount: categories.size || 9, // Fallback to 9 if none found
         loading: false
       });
@@ -197,6 +224,7 @@ const Dashboard = () => {
       case 'authority': return '👤';
       case 'blog': return '📝';
       case 'career': return '💼';
+      case 'category': return '🏷️';
       default: return '📌';
     }
   };

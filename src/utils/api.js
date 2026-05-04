@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://api.parekhchamber.com/api';
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:2000/api'
+  : 'https://api.parekhchamber.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -9,8 +11,32 @@ const api = axios.create({
   },
 });
 
+// Add a request interceptor to add the auth token to every request
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('hc_admin_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export const authApi = {
+  login: (data) => api.post('/auth/login', data),
+  updateProfile: (data) => api.put('/auth/profile', data),
+};
+
+
 export const authorizedPersonApi = {
-  list: () => api.get('/authorized-person/list'),
+  list: (siteId) => {
+    let url = '/authorized-person/list';
+    if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
+    return api.get(url);
+  },
   add: (data) => api.post('/authorized-person/add', data),
   bulkUpload: (formData) => api.post('/authorized-person/bulk-upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }

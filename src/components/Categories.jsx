@@ -18,12 +18,15 @@ const Categories = () => {
     { id: 'ParekhSilk07', name: 'Silk' },
   ];
 
-  const [selectedWebsite, setSelectedWebsite] = useState('all');
+  const [user] = useState(JSON.parse(localStorage.getItem('hc_admin_user') || '{}'));
+  const [selectedWebsite, setSelectedWebsite] = useState(user.siteId || 'all');
+
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [formData, setFormData] = useState({ name: '', siteId: 'ParekheTradeMarket02' });
+  const [formData, setFormData] = useState({ name: '', siteId: user.siteId || 'ParekheTradeMarket02' });
+
   const [errors, setErrors] = useState({ name: false, siteId: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -108,21 +111,24 @@ const Categories = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative group min-w-[200px]">
-              <select
-                value={selectedWebsite}
-                onChange={(e) => setSelectedWebsite(e.target.value)}
-                className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
-              >
-                {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
-              </select>
-              <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-            </div>
+            {user.siteId === 'all' && (
+              <div className="relative group min-w-[200px]">
+                <select
+                  value={selectedWebsite}
+                  onChange={(e) => setSelectedWebsite(e.target.value)}
+                  className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
+                >
+                  {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
+                </select>
+                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+              </div>
+            )}
             <button onClick={handleAdd} className="premium-btn-primary gap-2">
               <PlusIcon className="h-5 w-5" />
               New Category
             </button>
           </div>
+
         </div>
 
         {/* Main Grid View */}
@@ -202,23 +208,25 @@ const Categories = () => {
                   />
                 </div>
 
-                <div>
-                  <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.siteId ? 'text-rose-500' : 'text-slate-500'}`}>
-                    Host Site {errors.siteId && '— Selection Needed'}
-                  </label>
-                  <div className="relative group">
-                    <select
-                      value={formData.siteId}
-                      onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
-                      className={`clean-input font-bold text-slate-900 pr-10 appearance-none ${errors.siteId ? 'error' : ''}`}
-                    >
-                      {websites.filter(s => s.id !== 'all').map((site) => (
-                        <option key={site.id} value={site.id}>{site.name}</option>
-                      ))}
-                    </select>
-                    <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-                  </div>
-                </div>
+                {user.siteId === 'all' && (
+                    <div>
+                      <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.siteId ? 'text-rose-500' : 'text-slate-500'}`}>
+                        Host Site {errors.siteId && '— Selection Needed'}
+                      </label>
+                      <div className="relative group">
+                        <select
+                          value={formData.siteId}
+                          onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
+                          className={`clean-input font-bold text-slate-900 pr-10 appearance-none ${errors.siteId ? 'error' : ''}`}
+                        >
+                          {websites.filter(s => s.id !== 'all').map((site) => (
+                            <option key={site.id} value={site.id}>{site.name}</option>
+                          ))}
+                        </select>
+                        <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+                      </div>
+                    </div>
+                  )}
               </div>
 
               <div className="pt-4">
