@@ -52,7 +52,6 @@ export const formsApi = {
   getAppointments: () => api.get('/appointment'),
   getBuyerSubmissions: () => api.get('/etrade/submissions?type=buyer'),
   getSellerSubmissions: () => api.get('/etrade/submissions?type=seller'),
-  getContactSubmissions: () => api.get('/contact'),
   getBulkSellers: () => api.get('/bulk'),
   getMembershipEnquiries: () => api.get('/membership'),
   delete: (type, id) => {
@@ -63,7 +62,6 @@ export const formsApi = {
       appointment: '/appointment',
       buyer: '/etrade/submissions',
       seller: '/etrade/submissions',
-      contact: '/contact',
       bulk: '/bulk',
       membership: '/membership'
     };

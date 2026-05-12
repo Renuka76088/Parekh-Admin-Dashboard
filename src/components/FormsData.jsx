@@ -27,7 +27,6 @@ const FormsData = () => {
         { id: 'appointment', label: 'Appointment' },
         { id: 'buyer', label: 'e-Buyer' },
         { id: 'seller', label: 'e-Seller' },
-        { id: 'contact', label: 'Contact Us' },
         { id: 'bulk', label: 'Bulk Seller' },
         { id: 'membership', label: 'Membership Enquiry' },
     ];
@@ -72,19 +71,18 @@ const FormsData = () => {
                 }
             };
 
-            const [trade, quot, auc, appt, buyer, seller, contact, bulk, member] = await Promise.all([
+            const [trade, quot, auc, appt, buyer, seller, bulk, member] = await Promise.all([
                 fetchWithCatch(formsApi.getTradeEnquiries),
                 fetchWithCatch(formsApi.getQuotations),
                 fetchWithCatch(formsApi.getAuctions),
                 fetchWithCatch(formsApi.getAppointments),
                 fetchWithCatch(formsApi.getBuyerSubmissions),
                 fetchWithCatch(formsApi.getSellerSubmissions),
-                fetchWithCatch(formsApi.getContactSubmissions),
                 fetchWithCatch(formsApi.getBulkSellers),
                 fetchWithCatch(formsApi.getMembershipEnquiries),
             ]);
 
-            setData({ trade, quotation: quot, auction: auc, appointment: appt, buyer, seller, contact, bulk, membership: member });
+            setData({ trade, quotation: quot, auction: auc, appointment: appt, buyer, seller, bulk, membership: member });
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -314,7 +312,6 @@ const FormsData = () => {
                                                     {activeTab === 'appointment' && (item.reasonForVisit || 'Official Visit')}
                                                     {activeTab === 'buyer' && (item.categoryOfBusiness || 'Procurement')}
                                                     {activeTab === 'seller' && (item.categoryOfBusiness || 'Fulfillment')}
-                                                    {activeTab === 'contact' && 'General Contact'}
                                                     {activeTab === 'auction' && 'Auction Desk'}
                                                     {activeTab === 'membership' && (item.categoryOfBusiness || 'Membership Enrollment')}
                                                 </span>
