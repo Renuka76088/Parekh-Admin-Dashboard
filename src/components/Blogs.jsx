@@ -5,7 +5,9 @@ import {
   GlobeAltIcon, CalendarIcon, ChevronDownIcon,
   DocumentTextIcon, EyeIcon
 } from '@heroicons/react/24/outline';
-import { blogApi } from '../utils/api';
+import { blogApi, blogHeaderApi } from '../utils/api';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 const Blogs = () => {
   const websites = [
@@ -33,11 +35,43 @@ const Blogs = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.state?.openAddModal) {
-      handleAdd();
+  const [blogHeader, setBlogHeader] = useState({
+    title: 'BLOG & ARTICLE',
+    description: '',
+    authorName: '',
+    authorRole: '',
+    country: ''
+  });
+  const [headerLoading, setHeaderLoading] = useState(false);
+  const [isUpdatingHeader, setIsUpdatingHeader] = useState(false);
+
+  const fetchBlogHeader = async () => {
+    if (selectedWebsite === 'all') return;
+    try {
+      setHeaderLoading(true);
+      const res = await blogHeaderApi.get(selectedWebsite);
+      if (res.data.success) {
+        setBlogHeader(res.data.data);
+      }
+    } catch (error) {
+      console.error("Header Fetch Error:", error);
+    } finally {
+      setHeaderLoading(false);
     }
-  }, [location.state]);
+  };
+
+  const handleUpdateHeader = async (e) => {
+    e.preventDefault();
+    try {
+      setIsUpdatingHeader(true);
+      await blogHeaderApi.update(selectedWebsite, blogHeader);
+      alert("Blog section header updated successfully!");
+    } catch (error) {
+      alert("Failed to update header. Protocol error.");
+    } finally {
+      setIsUpdatingHeader(false);
+    }
+  };
 
   const fetchBlogs = async () => {
     try {
@@ -53,6 +87,7 @@ const Blogs = () => {
 
   useEffect(() => {
     fetchBlogs();
+    fetchBlogHeader();
   }, [selectedWebsite]);
 
   const handleImageChange = (e) => {
@@ -67,7 +102,7 @@ const Blogs = () => {
 
   const handleAdd = () => {
     setEditingBlog(null);
-    setFormData({ title: '', content: '', siteId: user.siteId || 'ParekheTradeMarket02', status: 'draft' });
+    setFormData({ title: '', content: '', siteId: user.siteId === 'all' ? (selectedWebsite === 'all' ? 'ParekheTradeMarket02' : selectedWebsite) : user.siteId, status: 'draft' });
     setImageFile(null);
 
     setImagePreview(null);
@@ -139,7 +174,7 @@ const Blogs = () => {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto space-y-8 animate-fade-in-up">
+      <div className="max-w-7xl mx-auto space-y-12 animate-fade-in-up">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
@@ -167,7 +202,110 @@ const Blogs = () => {
               Draft New Post
             </button>
           </div>
+        </div>
 
+        {/* Blog Header Configuration (Top Section) */}
+        {selectedWebsite !== 'all' && (
+          <div className="bg-white rounded-[3rem] p-8 lg:p-12 shadow-sm border border-slate-200 relative overflow-hidden group animate-fade-in">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl -mr-20 -mt-20"></div>
+            
+            <div className="relative z-10 flex flex-col lg:flex-row gap-12">
+              <div className="lg:w-1/3">
+                <div className="flex items-center gap-2 mb-4">
+                   <div className="h-6 w-1 bg-indigo-600 rounded-full"></div>
+                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] block">Section Configuration</span>
+                </div>
+                <h3 className="text-3xl font-black text-slate-900 tracking-tight leading-tight mb-4">Hero Content Management</h3>
+                <p className="text-slate-500 font-medium leading-relaxed mb-8">Customize the introductory quote and author credentials that appear at the top of this site's blog section.</p>
+                
+                <div className="p-6 bg-slate-50 border border-slate-100 rounded-3xl">
+                   <div className="flex items-center gap-3 mb-3">
+                      <div className="h-8 w-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-indigo-600 shadow-sm">
+                         <GlobeAltIcon className="h-4 w-4" />
+                      </div>
+                      <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">{websites.find(s => s.id === selectedWebsite)?.name}</span>
+                   </div>
+                   <p className="text-[11px] text-slate-400 italic font-bold leading-relaxed">Changes here affect the public website header immediately.</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleUpdateHeader} className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Blog Section Title</label>
+                  <input
+                    type="text"
+                    value={blogHeader.title}
+                    onChange={(e) => setBlogHeader({ ...blogHeader, title: e.target.value })}
+                    className="clean-input !h-14 px-6 font-bold text-slate-900 bg-slate-50/50 border-slate-100 focus:bg-white transition-all shadow-sm rounded-2xl"
+                    placeholder="e.g. BLOG & ARTICLE"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Main Quote / Description</label>
+                  <textarea
+                    value={blogHeader.description}
+                    onChange={(e) => setBlogHeader({ ...blogHeader, description: e.target.value })}
+                    className="w-full bg-slate-50/50 border-slate-100 text-slate-900 font-bold p-6 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all placeholder:text-slate-300 shadow-sm h-32 resize-none leading-relaxed"
+                    placeholder="Enter the section's core message..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Author Name</label>
+                  <input
+                    type="text"
+                    value={blogHeader.authorName}
+                    onChange={(e) => setBlogHeader({ ...blogHeader, authorName: e.target.value })}
+                    className="clean-input !h-14 px-6 font-bold text-slate-900 bg-slate-50/50 border-slate-100 focus:bg-white transition-all shadow-sm rounded-2xl"
+                    placeholder="Author Identity"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Professional Title</label>
+                  <input
+                    type="text"
+                    value={blogHeader.authorRole}
+                    onChange={(e) => setBlogHeader({ ...blogHeader, authorRole: e.target.value })}
+                    className="clean-input !h-14 px-6 font-bold text-slate-900 bg-slate-50/50 border-slate-100 focus:bg-white transition-all shadow-sm rounded-2xl"
+                    placeholder="Author Role"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Country</label>
+                  <input
+                    type="text"
+                    value={blogHeader.country}
+                    onChange={(e) => setBlogHeader({ ...blogHeader, country: e.target.value })}
+                    className="clean-input !h-14 px-6 font-bold text-slate-900 bg-slate-50/50 border-slate-100 focus:bg-white transition-all shadow-sm rounded-2xl"
+                    placeholder="Region"
+                  />
+                </div>
+
+                <div className="flex items-end">
+                  <button
+                    type="submit"
+                    disabled={isUpdatingHeader}
+                    className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-[0.2em] text-[11px] rounded-2xl shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-3 disabled:opacity-70 active:scale-[0.98]"
+                  >
+                    {isUpdatingHeader ? (
+                      <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : null}
+                    Update Hero Logic
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+           <h3 className="text-xl font-black text-slate-900 tracking-tight">Active Publications</h3>
+           <div className="flex items-center gap-2 text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+              <span className="text-[10px] font-bold uppercase tracking-widest">{blogs.length} Posts Total</span>
+           </div>
         </div>
 
         {/* Blog Grid */}
@@ -334,12 +472,23 @@ const Blogs = () => {
                   <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.content ? 'text-rose-500' : 'text-slate-500'}`}>
                     Content Payload {errors.content && '— Empty body forbidden'}
                   </label>
-                  <textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    className={`clean-input font-medium text-slate-800 h-64 resize-none leading-relaxed px-6 py-5 ${errors.content ? 'error' : ''}`}
-                    placeholder="Begin drafting the narrative..."
-                  />
+                  <div className="quill-editor-container h-[500px] mb-12">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.content}
+                      onChange={(content) => setFormData({ ...formData, content })}
+                      modules={{
+                        toolbar: [
+                          [{ 'header': [1, 2, 3, false] }],
+                          ['bold', 'italic', 'underline', 'strike'],
+                          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                          ['link', 'clean']
+                        ],
+                      }}
+                      className="bg-slate-50 rounded-3xl overflow-hidden border-slate-200 h-full flex flex-col"
+                      placeholder="Begin drafting the narrative..."
+                    />
+                  </div>
                 </div>
               </div>
 

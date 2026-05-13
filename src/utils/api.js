@@ -149,4 +149,31 @@ export const circularApi = {
   delete: (id) => api.delete(`/circulars/${id}`),
 };
 
+export const blogHeaderApi = {
+  get: (siteId) => api.get(`/blog-header/${siteId}`),
+  update: (siteId, data) => api.put(`/blog-header/${siteId}`, data),
+};
+
+export const noticeApi = {
+  list: (siteId) => {
+    let url = '/notices';
+    if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
+    return api.get(url);
+  },
+  add: (data) => api.post('/notices', data),
+  update: (id, data) => api.put(`/notices/${id}`, data),
+  delete: (id) => api.delete(`/notices/${id}`),
+};
+
+export const tenderApi = {
+  list: (siteId) => {
+    let url = '/tenders';
+    if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
+    return api.get(url);
+  },
+  add: (data) => api.post('/tenders', data),
+  update: (id, data) => api.put(`/tenders/${id}`, data),
+  delete: (id) => api.delete(`/tenders/${id}`),
+};
+
 export default api;

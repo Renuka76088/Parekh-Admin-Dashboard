@@ -6,6 +6,8 @@ import {
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
 import { careerApi } from '../utils/api';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 const Careers = () => {
   const websites = [
@@ -321,22 +323,42 @@ const Careers = () => {
                   <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.description ? 'text-rose-500' : 'text-slate-500'}`}>
                     Technical Description {errors.description && '— Required'}
                   </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className={`clean-input h-32 resize-none leading-relaxed font-medium bg-slate-50 border-slate-100 ${errors.description ? 'error' : ''}`}
-                    placeholder="Primary responsibilities and role context..."
-                  />
+                  <div className="h-[300px] mb-12">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.description}
+                      onChange={(content) => setFormData({ ...formData, description: content })}
+                      modules={{
+                        toolbar: [
+                          ['bold', 'italic', 'underline'],
+                          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                          ['clean']
+                        ],
+                      }}
+                      className="bg-slate-50 rounded-2xl overflow-hidden border-slate-200 h-full flex flex-col"
+                      placeholder="Primary responsibilities and role context..."
+                    />
+                  </div>
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-3 mb-2">Minimum Requirements</label>
-                  <textarea
-                    value={formData.experience}
-                    onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                    className="clean-input h-32 resize-none leading-relaxed font-medium bg-slate-50 border-slate-100"
-                    placeholder="Key qualifications and skills..."
-                  />
+                  <div className="h-[300px] mb-12">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.experience}
+                      onChange={(content) => setFormData({ ...formData, experience: content })}
+                      modules={{
+                        toolbar: [
+                          ['bold', 'italic', 'underline'],
+                          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                          ['clean']
+                        ],
+                      }}
+                      className="bg-slate-50 rounded-2xl overflow-hidden border-slate-200 h-full flex flex-col"
+                      placeholder="Key qualifications and skills..."
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -9,6 +9,8 @@ import Careers from './components/Careers';
 import Circulars from './components/Circulars';
 import Blogs from './components/Blogs';
 import MediaEvents from './components/MediaEvents';
+import NoticeBoard from './components/NoticeBoard';
+import Tenders from './components/Tenders';
 import Login from './components/Login';
 
 const ProtectedRoute = ({ children }) => {
@@ -34,6 +36,8 @@ function App() {
           <Route path="circulars" element={<Circulars />} />
           <Route path="blogs" element={<Blogs />} />
           <Route path="media-events" element={<MediaEvents />} />
+          <Route path="notice-board" element={<NoticeBoard />} />
+          <Route path="tenders" element={<Tenders />} />
         </Route>
       </Routes>
     </Router>
