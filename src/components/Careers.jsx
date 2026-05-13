@@ -174,10 +174,10 @@ const Careers = () => {
                   </h4>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => handleEdit(job)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
+                  <button onClick={() => handleEdit(job)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-indigo-100">
                     <PencilIcon className="w-5 h-5" />
                   </button>
-                  <button onClick={() => handleDelete(job._id)} className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
+                  <button onClick={() => handleDelete(job._id)} className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-rose-100">
                     <TrashIcon className="w-5 h-5" />
                   </button>
                 </div>

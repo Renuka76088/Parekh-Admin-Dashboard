@@ -197,11 +197,11 @@ const MediaEvents = () => {
                       {ev.category}
                     </span>
                   </div>
-                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                    <button onClick={() => handleEdit(ev)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-xl hover:scale-110 transition-transform">
+                  <div className="absolute inset-0 bg-slate-900/5 transition-opacity flex items-center justify-center gap-4">
+                    <button onClick={() => handleEdit(ev)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-xl hover:scale-110 transition-transform border border-slate-100">
                       <PencilIcon className="h-6 w-6" />
                     </button>
-                    <button onClick={() => handleDelete(ev._id)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-rose-500 shadow-xl hover:scale-110 transition-transform">
+                    <button onClick={() => handleDelete(ev._id)} className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-rose-500 shadow-xl hover:scale-110 transition-transform border border-slate-100">
                       <TrashIcon className="h-6 w-6" />
                     </button>
                   </div>

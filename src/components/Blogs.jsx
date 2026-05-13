@@ -205,10 +205,10 @@ const Blogs = () => {
                   <div className="flex justify-between items-start mb-4">
                     <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg uppercase tracking-widest">{blog.siteId?.replace('Parekh', '')}</span>
                     <div className="flex gap-2">
-                      <button onClick={() => handleEdit(blog)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
+                      <button onClick={() => handleEdit(blog)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-indigo-100">
                         <PencilIcon className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(blog._id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-transparent hover:border-slate-100">
+                      <button onClick={() => handleDelete(blog._id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-rose-100">
                         <TrashIcon className="w-4 h-4" />
                       </button>
                     </div>

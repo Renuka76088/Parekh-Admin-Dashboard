@@ -134,4 +134,19 @@ export const mediaEventApi = {
   delete: (id) => api.delete(`/media-events/${id}`),
 };
 
+export const circularApi = {
+  list: (siteId) => {
+    let url = '/circulars';
+    if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
+    return api.get(url);
+  },
+  add: (formData) => api.post('/circulars', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  update: (id, formData) => api.put(`/circulars/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  delete: (id) => api.delete(`/circulars/${id}`),
+};
+
 export default api;

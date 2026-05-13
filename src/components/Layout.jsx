@@ -419,7 +419,6 @@ const Layout = () => {
           </div>
         )}
 
-        {/* Scrollable Content Area */}
         <main className="flex-1 overflow-y-auto custom-scrollbar bg-[#f8fafc] px-6 py-8 lg:px-10 relative">
           <Outlet />
         </main>
