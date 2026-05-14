@@ -11,7 +11,9 @@ import Blogs from './components/Blogs';
 import MediaEvents from './components/MediaEvents';
 import NoticeBoard from './components/NoticeBoard';
 import Tenders from './components/Tenders';
+import EAuction from './components/EAuction';
 import Login from './components/Login';
+
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('hc_admin_token');
@@ -38,6 +40,8 @@ function App() {
           <Route path="media-events" element={<MediaEvents />} />
           <Route path="notice-board" element={<NoticeBoard />} />
           <Route path="tenders" element={<Tenders />} />
+          <Route path="e-auction" element={<EAuction />} />
+
         </Route>
       </Routes>
     </Router>

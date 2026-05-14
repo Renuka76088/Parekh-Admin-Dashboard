@@ -5,7 +5,8 @@ import {
   TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon, 
   PhotoIcon, Bars3Icon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon,
     BellIcon, UserCircleIcon, ClockIcon, ArrowRightOnRectangleIcon, Cog6ToothIcon,
-    EyeIcon, EyeSlashIcon, DocumentDuplicateIcon
+    EyeIcon, EyeSlashIcon, DocumentDuplicateIcon, BanknotesIcon
+
 } from '@heroicons/react/24/outline';
 import { formsApi, authApi } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
@@ -142,7 +143,9 @@ const Layout = () => {
     { name: 'Media Events', href: '/media-events', icon: PhotoIcon },
     { name: 'Notice Board', href: '/notice-board', icon: BellIcon },
     { name: 'Tenders & Contracts', href: '/tenders', icon: DocumentDuplicateIcon },
+    { name: 'e-Auction', href: '/e-auction', icon: BanknotesIcon },
   ];
+
 
   const filteredNavigation = navigation.filter(item => {
     // Restrict Authorities module to specific sites only

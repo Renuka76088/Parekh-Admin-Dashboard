@@ -176,4 +176,20 @@ export const tenderApi = {
   delete: (id) => api.delete(`/tenders/${id}`),
 };
 
+export const eauctionApi = {
+  list: (siteId) => {
+    let url = '/eauctions';
+    if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
+    return api.get(url);
+  },
+  add: (formData) => api.post('/eauctions', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  update: (id, formData) => api.put(`/eauctions/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  delete: (id) => api.delete(`/eauctions/${id}`),
+};
+
+
 export default api;
