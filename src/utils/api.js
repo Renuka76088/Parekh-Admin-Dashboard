@@ -215,6 +215,14 @@ export const managementApi = {
   deleteMember: (id) => api.delete(`/management/members/${id}`),
 };
 
+export const chamberServiceApi = {
+  list: (siteId) => api.get(`/chamber-services${siteId ? `?siteId=${siteId}` : ''}`),
+  add: (data) => api.post('/chamber-services', data),
+  update: (id, data) => api.put(`/chamber-services/${id}`, data),
+  delete: (id) => api.delete(`/chamber-services/${id}`),
+};
+
+
 
 
 

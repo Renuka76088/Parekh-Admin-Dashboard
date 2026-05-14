@@ -5,9 +5,9 @@ import {
   TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon, 
   PhotoIcon, Bars3Icon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon,
     BellIcon, UserCircleIcon, ClockIcon, ArrowRightOnRectangleIcon, Cog6ToothIcon,
-    EyeIcon, EyeSlashIcon, DocumentDuplicateIcon, BanknotesIcon
-
+    EyeIcon, EyeSlashIcon, DocumentDuplicateIcon, BanknotesIcon, SparklesIcon
 } from '@heroicons/react/24/outline';
+
 import { formsApi, authApi } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -146,6 +146,7 @@ const Layout = () => {
     { name: 'e-Auction', href: '/e-auction', icon: BanknotesIcon },
     { name: 'e-Quotation', href: '/e-quotation', icon: DocumentTextIcon },
     { name: 'Management', href: '/management', icon: UserGroupIcon },
+    { name: 'Chamber Services', href: '/chamber-services', icon: SparklesIcon },
   ];
 
 
@@ -164,6 +165,15 @@ const Layout = () => {
     if (user.siteId === 'ParekhChamberofTextile01') {
       if (item.name === 'Products & Services' || item.name === 'Categories') return false;
     }
+
+    // Chamber Services only for Chamber site or super admin
+    if (item.name === 'Chamber Services') {
+      return (
+        user.siteId === 'all' || 
+        user.siteId === 'ParekhChamberofTextile01'
+      );
+    }
+
     return true;
   });
 
