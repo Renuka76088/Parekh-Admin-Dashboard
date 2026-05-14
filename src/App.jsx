@@ -12,6 +12,8 @@ import MediaEvents from './components/MediaEvents';
 import NoticeBoard from './components/NoticeBoard';
 import Tenders from './components/Tenders';
 import EAuction from './components/EAuction';
+import EQuotation from './components/EQuotation';
+
 import Login from './components/Login';
 
 
@@ -41,6 +43,8 @@ function App() {
           <Route path="notice-board" element={<NoticeBoard />} />
           <Route path="tenders" element={<Tenders />} />
           <Route path="e-auction" element={<EAuction />} />
+          <Route path="e-quotation" element={<EQuotation />} />
+
 
         </Route>
       </Routes>

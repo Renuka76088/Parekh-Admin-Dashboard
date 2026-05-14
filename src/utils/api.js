@@ -191,5 +191,17 @@ export const eauctionApi = {
   delete: (id) => api.delete(`/eauctions/${id}`),
 };
 
+export const equotationApi = {
+  list: (siteId) => {
+    let url = '/equotations';
+    if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
+    return api.get(url);
+  },
+  add: (data) => api.post('/equotations', data),
+  update: (id, data) => api.put(`/equotations/${id}`, data),
+  delete: (id) => api.delete(`/equotations/${id}`),
+};
+
+
 
 export default api;
