@@ -202,6 +202,20 @@ export const equotationApi = {
   delete: (id) => api.delete(`/equotations/${id}`),
 };
 
+export const managementApi = {
+  getContent: (siteId) => api.get(`/management/content?siteId=${siteId}`),
+  updateContent: (data) => api.post('/management/content', data),
+  getMembers: (siteId) => api.get(`/management/members?siteId=${siteId}`),
+  addMember: (formData) => api.post('/management/members', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateMember: (id, formData) => api.put(`/management/members/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  deleteMember: (id) => api.delete(`/management/members/${id}`),
+};
+
+
 
 
 export default api;

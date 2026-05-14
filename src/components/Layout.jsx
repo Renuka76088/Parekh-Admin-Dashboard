@@ -145,7 +145,9 @@ const Layout = () => {
     { name: 'Tenders & Contracts', href: '/tenders', icon: DocumentDuplicateIcon },
     { name: 'e-Auction', href: '/e-auction', icon: BanknotesIcon },
     { name: 'e-Quotation', href: '/e-quotation', icon: DocumentTextIcon },
+    { name: 'Management', href: '/management', icon: UserGroupIcon },
   ];
+
 
 
 

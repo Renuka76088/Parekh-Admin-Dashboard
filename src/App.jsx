@@ -13,6 +13,8 @@ import NoticeBoard from './components/NoticeBoard';
 import Tenders from './components/Tenders';
 import EAuction from './components/EAuction';
 import EQuotation from './components/EQuotation';
+import Management from './components/Management';
+
 
 import Login from './components/Login';
 
@@ -44,6 +46,8 @@ function App() {
           <Route path="tenders" element={<Tenders />} />
           <Route path="e-auction" element={<EAuction />} />
           <Route path="e-quotation" element={<EQuotation />} />
+          <Route path="management" element={<Management />} />
+
 
 
         </Route>
