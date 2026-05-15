@@ -43,7 +43,7 @@ const Dashboard = () => {
           const res = await apiCall();
           return res.data?.data || res.data || [];
         } catch (e) {
-          console.error("API Call failed:", e.config?.url);
+          console.error("API Call failed:", e.config?.url || e.message);
           return [];
         }
       };

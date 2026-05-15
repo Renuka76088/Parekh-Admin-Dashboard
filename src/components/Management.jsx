@@ -50,8 +50,12 @@ const Management = () => {
         managementApi.getMembers(selectedWebsite)
       ]);
       
-      setContent(contentRes.data.data);
-      setMembers(membersRes.data.data);
+      if (contentRes.data.success && contentRes.data.data) {
+        setContent(contentRes.data.data);
+      }
+      if (membersRes.data.success && membersRes.data.data) {
+        setMembers(membersRes.data.data);
+      }
     } catch (error) {
       console.error("Fetch Error:", error);
     } finally {
@@ -202,12 +206,12 @@ const Management = () => {
 
           <div>
             <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-3 mb-2">Page Description / Introduction</label>
-            <div className="h-[300px] mb-12">
+            <div className="min-h-[300px] mb-12">
               <ReactQuill
                 theme="snow"
-                value={content.description}
+                value={content?.description || ''}
                 onChange={(val) => setContent({ ...content, description: val })}
-                className="bg-slate-50 rounded-2xl overflow-hidden border-slate-200 h-full flex flex-col"
+                className="bg-slate-50 rounded-2xl overflow-hidden border-slate-200 h-full min-h-[250px]"
               />
             </div>
           </div>

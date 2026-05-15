@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 import {
-  PlusIcon, PencilIcon, TrashIcon, XMarkIcon,
-  ChevronDownIcon, BriefcaseIcon, SparklesIcon,
-  ScaleIcon, GlobeAltIcon, UserGroupIcon, 
-  LightBulbIcon, BuildingOfficeIcon, DocumentTextIcon,
-  ShieldCheckIcon, PresentationChartLineIcon, HandThumbUpIcon,
-  CpuChipIcon, BeakerIcon, CurrencyDollarIcon,
-  AcademicCapIcon, RocketLaunchIcon, PuzzlePieceIcon,
-  Square3Stack3DIcon, WrenchScrewdriverIcon, ShoppingBagIcon
-} from '@heroicons/react/24/outline';
+  Briefcase, Sparkles, Scale, Globe, Users, Lightbulb, Factory, FileText, 
+  ShieldCheck, Presentation, Handshake, Cpu, FlaskConical, 
+  Banknote, GraduationCap, Rocket, Puzzle, Layers, Wrench, ShoppingBag, Settings,
+  Plus, Pencil, Trash2, X
+} from 'lucide-react';
 import { chamberServiceApi } from '../utils/api';
 
 const ChamberServices = () => {
@@ -21,26 +17,27 @@ const ChamberServices = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const icons = [
-    { name: 'BriefcaseIcon', icon: BriefcaseIcon },
-    { name: 'SparklesIcon', icon: SparklesIcon },
-    { name: 'ScaleIcon', icon: ScaleIcon },
-    { name: 'GlobeAltIcon', icon: GlobeAltIcon },
-    { name: 'UserGroupIcon', icon: UserGroupIcon },
-    { name: 'LightBulbIcon', icon: LightBulbIcon },
-    { name: 'BuildingOfficeIcon', icon: BuildingOfficeIcon },
-    { name: 'DocumentTextIcon', icon: DocumentTextIcon },
-    { name: 'ShieldCheckIcon', icon: ShieldCheckIcon },
-    { name: 'PresentationChartLineIcon', icon: PresentationChartLineIcon },
-    { name: 'HandThumbUpIcon', icon: HandThumbUpIcon },
-    { name: 'CpuChipIcon', icon: CpuChipIcon },
-    { name: 'BeakerIcon', icon: BeakerIcon },
-    { name: 'CurrencyDollarIcon', icon: CurrencyDollarIcon },
-    { name: 'AcademicCapIcon', icon: AcademicCapIcon },
-    { name: 'RocketLaunchIcon', icon: RocketLaunchIcon },
-    { name: 'PuzzlePieceIcon', icon: PuzzlePieceIcon },
-    { name: 'Square3Stack3DIcon', icon: Square3Stack3DIcon },
-    { name: 'WrenchScrewdriverIcon', icon: WrenchScrewdriverIcon },
-    { name: 'ShoppingBagIcon', icon: ShoppingBagIcon },
+    { name: 'BriefcaseIcon', icon: Briefcase },
+    { name: 'SparklesIcon', icon: Sparkles },
+    { name: 'ScaleIcon', icon: Scale },
+    { name: 'GlobeAltIcon', icon: Globe },
+    { name: 'UserGroupIcon', icon: Users },
+    { name: 'LightBulbIcon', icon: Lightbulb },
+    { name: 'BuildingOfficeIcon', icon: Factory },
+    { name: 'DocumentTextIcon', icon: FileText },
+    { name: 'ShieldCheckIcon', icon: ShieldCheck },
+    { name: 'PresentationChartLineIcon', icon: Presentation },
+    { name: 'HandThumbUpIcon', icon: Handshake },
+    { name: 'CpuChipIcon', icon: Cpu },
+    { name: 'BeakerIcon', icon: FlaskConical },
+    { name: 'CurrencyDollarIcon', icon: Banknote },
+    { name: 'AcademicCapIcon', icon: GraduationCap },
+    { name: 'RocketLaunchIcon', icon: Rocket },
+    { name: 'PuzzlePieceIcon', icon: Puzzle },
+    { name: 'Square3Stack3DIcon', icon: Layers },
+    { name: 'WrenchScrewdriverIcon', icon: Wrench },
+    { name: 'ShoppingBagIcon', icon: ShoppingBag },
+    { name: 'Cog6ToothIcon', icon: Settings },
   ];
 
   const fetchServices = async () => {
@@ -104,7 +101,7 @@ const ChamberServices = () => {
 
   const getIconComponent = (iconName) => {
     const iconObj = icons.find(i => i.name === iconName);
-    return iconObj ? iconObj.icon : BriefcaseIcon;
+    return iconObj ? iconObj.icon : Briefcase;
   };
 
   return (
@@ -116,7 +113,7 @@ const ChamberServices = () => {
           <p className="mt-1 text-slate-500 font-medium">Manage core services displayed on the Chamber portal.</p>
         </div>
         <button onClick={handleAdd} className="premium-btn-primary gap-2">
-          <PlusIcon className="h-5 w-5" />
+          <Plus className="h-5 w-5" />
           Add Service
         </button>
       </div>
@@ -128,7 +125,7 @@ const ChamberServices = () => {
           </div>
         ) : services.length === 0 ? (
           <div className="col-span-full py-20 text-center premium-card border-dashed">
-            <BriefcaseIcon className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+            <Briefcase className="w-12 h-12 text-slate-200 mx-auto mb-4" />
             <h4 className="text-lg font-black text-slate-900 tracking-tight">No Services Defined</h4>
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Add your first chamber service</p>
           </div>
@@ -143,10 +140,10 @@ const ChamberServices = () => {
                     </div>
                     <div className="flex gap-2">
                         <button onClick={() => handleEdit(service)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-xl transition-colors">
-                            <PencilIcon className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                         </button>
                         <button onClick={() => handleDelete(service._id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-slate-50 rounded-xl transition-colors">
-                            <TrashIcon className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                         </button>
                     </div>
                  </div>
@@ -174,7 +171,7 @@ const ChamberServices = () => {
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Icon & Title Configuration</p>
               </div>
               <button onClick={() => setShowModal(false)} className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-all">
-                <XMarkIcon className="w-6 h-6" />
+                <X className="w-6 h-6" />
               </button>
             </div>
 

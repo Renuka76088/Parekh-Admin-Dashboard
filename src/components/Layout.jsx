@@ -1,11 +1,11 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { 
-  HomeIcon, DocumentTextIcon, UserGroupIcon, CubeIcon, 
-  TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon, 
+import {
+  HomeIcon, DocumentTextIcon, UserGroupIcon, CubeIcon,
+  TagIcon, BriefcaseIcon, DocumentIcon, PencilSquareIcon,
   PhotoIcon, Bars3Icon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon,
-    BellIcon, UserCircleIcon, ClockIcon, ArrowRightOnRectangleIcon, Cog6ToothIcon,
-    EyeIcon, EyeSlashIcon, DocumentDuplicateIcon, BanknotesIcon, SparklesIcon
+  BellIcon, UserCircleIcon, ClockIcon, ArrowRightOnRectangleIcon, Cog6ToothIcon,
+  EyeIcon, EyeSlashIcon, DocumentDuplicateIcon, BanknotesIcon, SparklesIcon
 } from '@heroicons/react/24/outline';
 
 import { formsApi, authApi } from '../utils/api';
@@ -146,6 +146,7 @@ const Layout = () => {
     { name: 'e-Auction', href: '/e-auction', icon: BanknotesIcon },
     { name: 'e-Quotation', href: '/e-quotation', icon: DocumentTextIcon },
     { name: 'Management', href: '/management', icon: UserGroupIcon },
+
     { name: 'Chamber Services', href: '/chamber-services', icon: SparklesIcon },
   ];
 
@@ -156,8 +157,8 @@ const Layout = () => {
     // Restrict Authorities module to specific sites only
     if (item.name === 'Authorities') {
       return (
-        user.siteId === 'all' || 
-        user.siteId === 'ParekhChamberofTextile01' || 
+        user.siteId === 'all' ||
+        user.siteId === 'ParekhChamberofTextile01' ||
         user.siteId === 'ParekheTradeMarket02'
       );
     }
@@ -169,7 +170,7 @@ const Layout = () => {
     // Chamber Services only for Chamber site or super admin
     if (item.name === 'Chamber Services') {
       return (
-        user.siteId === 'all' || 
+        user.siteId === 'all' ||
         user.siteId === 'ParekhChamberofTextile01'
       );
     }
@@ -188,10 +189,9 @@ const Layout = () => {
       )}
 
       {/* Sidebar */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-50 transform border-r border-slate-200 bg-white transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-72 xl:w-80'}`}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 transform border-r border-slate-200 bg-white transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-72 xl:w-80'}`}
       >
         <div className="flex flex-col h-full">
           {/* Logo Section */}
@@ -204,11 +204,11 @@ const Layout = () => {
                 {currentSiteName.split(' ')[0]} <span className="text-indigo-600 text-sm font-bold uppercase ml-1">Admin</span>
               </span>
             </div>
-            <button 
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 transition-colors"
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 transition-colors"
             >
-                {sidebarCollapsed ? <ChevronRightIcon className="h-4 w-4" /> : <ChevronLeftIcon className="h-4 w-4" />}
+              {sidebarCollapsed ? <ChevronRightIcon className="h-4 w-4" /> : <ChevronLeftIcon className="h-4 w-4" />}
             </button>
           </div>
 
@@ -220,25 +220,23 @@ const Layout = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center p-3 rounded-xl transition-all duration-200 group relative ${
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700 font-bold'
-                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
+                  className={`flex items-center p-3 rounded-xl transition-all duration-200 group relative ${isActive
+                    ? 'bg-indigo-50 text-indigo-700 font-bold'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                    }`}
                 >
-                  <item.icon className={`h-6 w-6 shrink-0 transition-colors ${
-                    isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'
-                  }`} />
+                  <item.icon className={`h-6 w-6 shrink-0 transition-colors ${isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'
+                    }`} />
                   <span className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
                     {item.name}
                   </span>
                   {isActive && !sidebarCollapsed && (
-                      <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-indigo-600"></div>
+                    <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-indigo-600"></div>
                   )}
                   {sidebarCollapsed && (
-                      <div className="absolute left-14 scale-0 group-hover:scale-100 transition-transform origin-left bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-bold z-50 shadow-xl ml-2">
-                          {item.name}
-                      </div>
+                    <div className="absolute left-14 scale-0 group-hover:scale-100 transition-transform origin-left bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-bold z-50 shadow-xl ml-2">
+                      {item.name}
+                    </div>
                   )}
                 </Link>
               );
@@ -246,7 +244,7 @@ const Layout = () => {
           </nav>
 
           <div className="p-4 border-t border-slate-100">
-            <button 
+            <button
               onClick={handleLogout}
               className={`w-full p-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors flex items-center overflow-hidden ${sidebarCollapsed ? 'justify-center' : ''}`}
             >
@@ -279,104 +277,104 @@ const Layout = () => {
 
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl">
-                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse mr-2"></span>
-                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Server: Online</span>
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse mr-2"></span>
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Server: Online</span>
             </div>
-            
+
             <div className="flex items-center gap-3 relative">
-                <button 
-                  onClick={() => setShowNotifDropdown(!showNotifDropdown)}
-                  className={`p-2.5 rounded-xl relative transition-all ${showNotifDropdown ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-slate-500 hover:bg-slate-50'}`}
+              <button
+                onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+                className={`p-2.5 rounded-xl relative transition-all ${showNotifDropdown ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-slate-500 hover:bg-slate-50'}`}
+              >
+                <BellIcon className="h-6 w-6" />
+                {notifications.length > 0 && (
+                  <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                )}
+              </button>
+
+              {showNotifDropdown && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowNotifDropdown(false)}></div>
+                  <div className="absolute right-0 top-full mt-4 w-80 sm:w-96 bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden z-50 animate-scale-in origin-top-right">
+                    <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Recent Activity</h3>
+                      <span className="text-[10px] font-bold text-indigo-600 px-2 py-0.5 bg-indigo-50 rounded-full">LIVE</span>
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                      {loadingNotifs && notifications.length === 0 ? (
+                        <div className="p-10 text-center">
+                          <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-indigo-500 border-t-transparent"></div>
+                        </div>
+                      ) : notifications.length === 0 ? (
+                        <div className="p-10 text-center text-slate-400 italic text-sm">No new notifications</div>
+                      ) : (
+                        notifications.map((notif, idx) => (
+                          <Link
+                            key={notif._id || idx}
+                            to="/forms-data"
+                            state={{ filterType: notif.type, highlightId: notif._id }}
+                            onClick={() => setShowNotifDropdown(false)}
+                            className="flex items-start gap-4 p-5 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
+                          >
+                            <div className="h-10 w-10 shrink-0 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                              <DocumentTextIcon className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-slate-900 truncate">New {notif.type}</p>
+                              <p className="text-xs text-slate-500 truncate">{notif.name || notif.firmName || notif.traderName || notif.visitorName || notif.buyerName || notif.sellerName || 'Anonymous Sender'}</p>
+                              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-1 flex items-center gap-1">
+                                <ClockIcon className="h-3 w-3" />
+                                {new Date(notif.createdAt || notif.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                          </Link>
+                        ))
+                      )}
+                    </div>
+                    <Link
+                      to="/forms-data"
+                      className="block w-full py-4 text-center text-[11px] font-black text-slate-400 hover:text-indigo-600 hover:bg-slate-50 transition-all uppercase tracking-widest border-t border-slate-100"
+                    >
+                      View all communications
+                    </Link>
+                  </div>
+                </>
+              )}
+
+              <div className="relative">
+                <button
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  className={`p-2.5 rounded-xl transition-all ${showProfileMenu ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:bg-slate-50'}`}
                 >
-                    <BellIcon className="h-6 w-6" />
-                    {notifications.length > 0 && (
-                      <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-                    )}
+                  <UserCircleIcon className="h-6 w-6" />
                 </button>
 
-                {showNotifDropdown && (
+                {showProfileMenu && (
                   <>
-                    <div className="fixed inset-0 z-40" onClick={() => setShowNotifDropdown(false)}></div>
-                    <div className="absolute right-0 top-full mt-4 w-80 sm:w-96 bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden z-50 animate-scale-in origin-top-right">
-                      <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Recent Activity</h3>
-                        <span className="text-[10px] font-bold text-indigo-600 px-2 py-0.5 bg-indigo-50 rounded-full">LIVE</span>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)}></div>
+                    <div className="absolute right-0 top-full mt-4 w-56 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-scale-in origin-top-right py-2">
+                      <div className="px-5 py-3 border-b border-slate-50">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Signed in as</p>
+                        <p className="text-sm font-black text-slate-900 truncate">{user.username}</p>
                       </div>
-                      <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                        {loadingNotifs && notifications.length === 0 ? (
-                          <div className="p-10 text-center">
-                            <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-indigo-500 border-t-transparent"></div>
-                          </div>
-                        ) : notifications.length === 0 ? (
-                          <div className="p-10 text-center text-slate-400 italic text-sm">No new notifications</div>
-                        ) : (
-                          notifications.map((notif, idx) => (
-                            <Link 
-                              key={notif._id || idx}
-                              to="/forms-data"
-                              state={{ filterType: notif.type, highlightId: notif._id }}
-                              onClick={() => setShowNotifDropdown(false)}
-                              className="flex items-start gap-4 p-5 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
-                            >
-                              <div className="h-10 w-10 shrink-0 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-                                <DocumentTextIcon className="h-5 w-5" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-bold text-slate-900 truncate">New {notif.type}</p>
-                                <p className="text-xs text-slate-500 truncate">{notif.name || notif.firmName || notif.traderName || notif.visitorName || notif.buyerName || notif.sellerName || 'Anonymous Sender'}</p>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-1 flex items-center gap-1">
-                                  <ClockIcon className="h-3 w-3" />
-                                  {new Date(notif.createdAt || notif.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                              </div>
-                            </Link>
-                          ))
-                        )}
-                      </div>
-                      <Link 
-                        to="/forms-data"
-                        className="block w-full py-4 text-center text-[11px] font-black text-slate-400 hover:text-indigo-600 hover:bg-slate-50 transition-all uppercase tracking-widest border-t border-slate-100"
+                      <button
+                        onClick={() => { setShowSettingsModal(true); setShowProfileMenu(false); }}
+                        className="w-full flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
                       >
-                        View all communications
-                      </Link>
+                        <Cog6ToothIcon className="h-4 w-4" />
+                        <span className="font-bold">Account Settings</span>
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-5 py-3 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+                      >
+                        <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                        <span className="font-bold">Logout</span>
+                      </button>
                     </div>
                   </>
                 )}
-                
-                <div className="relative">
-                  <button 
-                    onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className={`p-2.5 rounded-xl transition-all ${showProfileMenu ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:bg-slate-50'}`}
-                  >
-                      <UserCircleIcon className="h-6 w-6" />
-                  </button>
-
-                  {showProfileMenu && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)}></div>
-                      <div className="absolute right-0 top-full mt-4 w-56 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-scale-in origin-top-right py-2">
-                        <div className="px-5 py-3 border-b border-slate-50">
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Signed in as</p>
-                          <p className="text-sm font-black text-slate-900 truncate">{user.username}</p>
-                        </div>
-                        <button 
-                          onClick={() => { setShowSettingsModal(true); setShowProfileMenu(false); }}
-                          className="w-full flex items-center gap-3 px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
-                        >
-                          <Cog6ToothIcon className="h-4 w-4" />
-                          <span className="font-bold">Account Settings</span>
-                        </button>
-                        <button 
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-5 py-3 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
-                        >
-                          <ArrowRightOnRectangleIcon className="h-4 w-4" />
-                          <span className="font-bold">Logout</span>
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
+              </div>
             </div>
           </div>
         </header>

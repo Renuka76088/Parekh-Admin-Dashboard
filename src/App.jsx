@@ -14,6 +14,7 @@ import Tenders from './components/Tenders';
 import EAuction from './components/EAuction';
 import EQuotation from './components/EQuotation';
 import Management from './components/Management';
+
 import ChamberServices from './components/ChamberServices';
 
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="e-auction" element={<EAuction />} />
           <Route path="e-quotation" element={<EQuotation />} />
           <Route path="management" element={<Management />} />
+          <Route path="membership" element={<Navigate to="/forms-data" replace />} />
           <Route path="chamber-services" element={<ChamberServices />} />
 
 

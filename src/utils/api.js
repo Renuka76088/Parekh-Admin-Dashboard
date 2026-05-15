@@ -54,6 +54,7 @@ export const formsApi = {
   getSellerSubmissions: () => api.get('/etrade/submissions?type=seller'),
   getBulkSellers: () => api.get('/bulk'),
   getMembershipEnquiries: () => api.get('/membership'),
+  getContactSubmissions: () => api.get('/contact'),
   delete: (type, id) => {
     const endpoints = {
       trade: '/trade-enquiry',
@@ -63,7 +64,8 @@ export const formsApi = {
       buyer: '/etrade/submissions',
       seller: '/etrade/submissions',
       bulk: '/bulk',
-      membership: '/membership'
+      membership: '/membership',
+      contact: '/contact'
     };
     return api.delete(`${endpoints[type]}/${id}`);
   }

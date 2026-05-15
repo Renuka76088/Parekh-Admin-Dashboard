@@ -28,7 +28,15 @@ const Blogs = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
-  const [formData, setFormData] = useState({ title: '', content: '', siteId: 'ParekheTradeMarket02', status: 'draft' });
+  const [formData, setFormData] = useState({ 
+    title: '', 
+    content: '', 
+    siteId: 'ParekheTradeMarket02', 
+    status: 'draft',
+    author: 'Admin',
+    date: new Date().toISOString().split('T')[0],
+    category: 'Article'
+  });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({ title: false, content: false, siteId: false });
@@ -102,7 +110,15 @@ const Blogs = () => {
 
   const handleAdd = () => {
     setEditingBlog(null);
-    setFormData({ title: '', content: '', siteId: user.siteId === 'all' ? (selectedWebsite === 'all' ? 'ParekheTradeMarket02' : selectedWebsite) : user.siteId, status: 'draft' });
+    setFormData({ 
+      title: '', 
+      content: '', 
+      siteId: user.siteId === 'all' ? (selectedWebsite === 'all' ? 'ParekheTradeMarket02' : selectedWebsite) : user.siteId, 
+      status: 'draft',
+      author: 'Admin',
+      date: new Date().toISOString().split('T')[0],
+      category: 'Article'
+    });
     setImageFile(null);
 
     setImagePreview(null);
@@ -112,7 +128,15 @@ const Blogs = () => {
 
   const handleEdit = (blog) => {
     setEditingBlog(blog);
-    setFormData({ title: blog.title, content: blog.content, siteId: blog.siteId, status: blog.status });
+    setFormData({ 
+      title: blog.title, 
+      content: blog.content, 
+      siteId: blog.siteId, 
+      status: blog.status,
+      author: blog.author || 'Admin',
+      date: blog.date ? new Date(blog.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      category: blog.category || 'Article'
+    });
     setImageFile(null);
     const imgUrl = blog.thumbnail && (blog.thumbnail.startsWith('http') ? blog.thumbnail : `https://api.parekhchamber.com/${blog.thumbnail}`);
     setImagePreview(imgUrl);
@@ -154,6 +178,9 @@ const Blogs = () => {
     data.append('content', formData.content);
     data.append('siteId', formData.siteId);
     data.append('status', formData.status);
+    data.append('author', formData.author);
+    data.append('date', formData.date);
+    data.append('category', formData.category);
     if (imageFile) data.append('thumbnail', imageFile);
 
     try {
@@ -231,7 +258,7 @@ const Blogs = () => {
 
               <form onSubmit={handleUpdateHeader} className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Blog Section Title</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Blog Page Title / Heading</label>
                   <input
                     type="text"
                     value={blogHeader.title}
@@ -242,12 +269,12 @@ const Blogs = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Main Quote / Description</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Quote Line / Description</label>
                   <textarea
                     value={blogHeader.description}
                     onChange={(e) => setBlogHeader({ ...blogHeader, description: e.target.value })}
                     className="w-full bg-slate-50/50 border-slate-100 text-slate-900 font-bold p-6 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all placeholder:text-slate-300 shadow-sm h-32 resize-none leading-relaxed"
-                    placeholder="Enter the section's core message..."
+                    placeholder="Enter the section's core message or quote..."
                   />
                 </div>
 
@@ -355,7 +382,7 @@ const Blogs = () => {
                     {blog.title}
                   </h5>
                   <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 flex-1 leading-relaxed">
-                    {blog.content}
+                    {blog.content.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
                   </p>
                   <div className="flex items-center gap-4 pt-4 border-t border-slate-100/60">
                     <div className="flex items-center gap-1.5 text-slate-400 bg-white px-2 py-1 rounded-lg border border-slate-100 shadow-sm">
@@ -444,6 +471,45 @@ const Blogs = () => {
                     </div>
                   )}
 
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 ml-3 mb-2">
+                        Author Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.author}
+                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                        className="clean-input font-bold text-slate-900"
+                        placeholder="Admin"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 ml-3 mb-2">
+                        Category / Tag
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="clean-input font-bold text-slate-900"
+                        placeholder="Article"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 ml-3 mb-2">
+                      Publication Date
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      className="clean-input font-bold text-slate-900"
+                    />
+                  </div>
+
 
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 ml-3 mb-2">Publishing Status</label>
@@ -482,7 +548,7 @@ const Blogs = () => {
                           [{ 'header': [1, 2, 3, false] }],
                           ['bold', 'italic', 'underline', 'strike'],
                           [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                          ['link', 'clean']
+                          ['link', 'image', 'clean']
                         ],
                       }}
                       className="bg-slate-50 rounded-3xl overflow-hidden border-slate-200 h-full flex flex-col"
