@@ -184,10 +184,10 @@ export const eauctionApi = {
     if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
     return api.get(url);
   },
-  add: (formData) => api.post('/eauctions', formData, {
+  add: (data) => api.post('/eauctions', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
-  update: (id, formData) => api.put(`/eauctions/${id}`, formData, {
+  update: (id, data) => api.put(`/eauctions/${id}`, data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
   delete: (id) => api.delete(`/eauctions/${id}`),
@@ -199,8 +199,12 @@ export const equotationApi = {
     if (siteId && siteId !== 'all') url += `?siteId=${siteId}`;
     return api.get(url);
   },
-  add: (data) => api.post('/equotations', data),
-  update: (id, data) => api.put(`/equotations/${id}`, data),
+  add: (data) => api.post('/equotations', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  update: (id, data) => api.put(`/equotations/${id}`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   delete: (id) => api.delete(`/equotations/${id}`),
 };
 
@@ -223,9 +227,5 @@ export const chamberServiceApi = {
   update: (id, data) => api.put(`/chamber-services/${id}`, data),
   delete: (id) => api.delete(`/chamber-services/${id}`),
 };
-
-
-
-
 
 export default api;

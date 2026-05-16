@@ -326,7 +326,15 @@ const Circulars = () => {
                   <input
                     type="file"
                     accept="application/pdf"
-                    onChange={(e) => setFormData({ ...formData, pdf: e.target.files[0] })}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file && file.size > 10 * 1024 * 1024) {
+                        alert("The selected PDF is too large. Please reduce its size below 10MB before uploading.");
+                        e.target.value = ""; // Clear the input
+                        return;
+                      }
+                      setFormData({ ...formData, pdf: file });
+                    }}
                     className="hidden"
                     id="pdf-upload"
                   />
