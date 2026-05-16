@@ -24,6 +24,7 @@ const EAuction = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    date: new Date().toISOString().split('T')[0],
     image: null,
     siteId: '',
     _id: null
@@ -43,6 +44,7 @@ const EAuction = () => {
         setFormData({
           title: auction.title || '',
           description: auction.description || '',
+          date: auction.date ? new Date(auction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
           image: null,
           siteId: auction.siteId,
           _id: auction._id
@@ -52,6 +54,7 @@ const EAuction = () => {
         setFormData({
           title: '',
           description: '',
+          date: new Date().toISOString().split('T')[0],
           image: null,
           siteId: selectedWebsite,
           _id: null
@@ -91,6 +94,7 @@ const EAuction = () => {
       const data = new FormData();
       data.append('title', formData.title);
       data.append('description', formData.description);
+      data.append('date', formData.date);
       data.append('siteId', formData.siteId);
       if (formData.image) {
         data.append('image', formData.image);
@@ -211,6 +215,17 @@ const EAuction = () => {
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="clean-input font-bold text-slate-900 text-lg"
                   placeholder="Enter Title..."
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+                  Auction Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="clean-input font-bold text-slate-900"
                 />
               </div>
               <div className="quill-wrapper">

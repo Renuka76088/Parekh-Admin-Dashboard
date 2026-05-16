@@ -24,6 +24,7 @@ const EQuotation = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    date: new Date().toISOString().split('T')[0],
     siteId: '',
     _id: null
   });
@@ -41,6 +42,7 @@ const EQuotation = () => {
         setFormData({
           title: quotation.title || '',
           description: quotation.description || '',
+          date: quotation.date ? new Date(quotation.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
           siteId: quotation.siteId,
           _id: quotation._id
         });
@@ -48,6 +50,7 @@ const EQuotation = () => {
         setFormData({
           title: '',
           description: '',
+          date: new Date().toISOString().split('T')[0],
           siteId: selectedWebsite,
           _id: null
         });
@@ -77,6 +80,7 @@ const EQuotation = () => {
       const payload = {
         title: formData.title,
         description: formData.description,
+        date: formData.date,
         siteId: formData.siteId
       };
 
@@ -157,6 +161,17 @@ const EQuotation = () => {
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="clean-input font-bold text-slate-900 text-lg"
                   placeholder="Enter Title..."
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+                  Quotation Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="clean-input font-bold text-slate-900"
                 />
               </div>
               <div className="quill-wrapper">
