@@ -5,7 +5,7 @@ import {
 } from '@heroicons/react/24/outline';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { eauctionApi } from '../utils/api';
+import { eauctionApi, eauctionHeaderApi } from '../utils/api';
 
 const EAuction = () => {
   const websites = [
@@ -36,6 +36,10 @@ const EAuction = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
+  const [headerData, setHeaderData] = useState({ title: '', description: '' });
+  const [isSavingHeader, setIsSavingHeader] = useState(false);
+  const [headerMessage, setHeaderMessage] = useState({ type: '', text: '' });
+
   const fetchAuctions = async () => {
     try {
       setLoading(true);
@@ -48,8 +52,37 @@ const EAuction = () => {
     }
   };
 
+  const fetchHeader = async () => {
+    try {
+      const res = await eauctionHeaderApi.get(selectedWebsite);
+      if (res.data.success && res.data.data) {
+        setHeaderData({
+          title: res.data.data.title || '',
+          description: res.data.data.description || ''
+        });
+      }
+    } catch (error) {
+      console.error("Fetch Header Error:", error);
+    }
+  };
+
+  const handleHeaderSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setIsSavingHeader(true);
+      setHeaderMessage({ type: '', text: '' });
+      await eauctionHeaderApi.update(selectedWebsite, headerData);
+      setHeaderMessage({ type: 'success', text: 'Page Header updated successfully!' });
+    } catch (error) {
+      setHeaderMessage({ type: 'error', text: 'Failed to update Page Header.' });
+    } finally {
+      setIsSavingHeader(false);
+    }
+  };
+
   useEffect(() => {
     fetchAuctions();
+    fetchHeader();
     resetForm();
   }, [selectedWebsite]);
 
@@ -167,6 +200,69 @@ const EAuction = () => {
           </div>
         )}
       </div>
+
+      {/* Page Header Editor */}
+      <form onSubmit={handleHeaderSubmit} className="premium-card p-6 md:p-8 space-y-6 bg-white border border-slate-100">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">
+              Page Header Settings
+            </h3>
+            <p className="text-xs text-slate-400 font-medium">Modify the title and description shown on the user portal's e-Auction page.</p>
+          </div>
+        </div>
+
+        {headerMessage.text && (
+          <div className={`p-4 rounded-xl flex items-center gap-3 font-bold text-xs ${headerMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
+            {headerMessage.type === 'success' && <CheckIcon className="w-4 h-4" />}
+            {headerMessage.text}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="col-span-1">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+              Portal Header Title
+            </label>
+            <input
+              type="text"
+              value={headerData.title}
+              onChange={(e) => setHeaderData({ ...headerData, title: e.target.value })}
+              className="clean-input font-bold text-slate-900"
+              placeholder="e.g. e-Auction"
+              required
+            />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+              Portal Header Description (Max 2 lines recommended)
+            </label>
+            <textarea
+              value={headerData.description}
+              onChange={(e) => setHeaderData({ ...headerData, description: e.target.value })}
+              className="clean-input font-bold text-slate-900 resize-none"
+              placeholder="Enter short description..."
+              rows={2}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end pt-4 border-t border-slate-100">
+          <button
+            type="submit"
+            disabled={isSavingHeader}
+            className="premium-btn-primary px-8 py-3 text-xs shadow-md disabled:opacity-70 flex items-center gap-2"
+          >
+            {isSavingHeader ? (
+              <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <CheckIcon className="w-4 h-4" />
+            )}
+            <span>Save Header Settings</span>
+          </button>
+        </div>
+      </form>
 
       {/* Form Section */}
       <form onSubmit={handleSubmit} className="premium-card p-8 md:p-12 space-y-10 bg-white">

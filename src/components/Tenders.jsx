@@ -4,7 +4,7 @@ import {
   XMarkIcon, ChevronDownIcon, CheckCircleIcon,
   ListBulletIcon, InformationCircleIcon
 } from '@heroicons/react/24/outline';
-import { tenderApi } from '../utils/api';
+import { tenderApi, tenderHeaderApi } from '../utils/api';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -37,6 +37,10 @@ const Tenders = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [headerData, setHeaderData] = useState({ title: '', description: '' });
+  const [isSavingHeader, setIsSavingHeader] = useState(false);
+  const [headerMessage, setHeaderMessage] = useState({ type: '', text: '' });
+
   const fetchTenders = async () => {
     try {
       setLoading(true);
@@ -49,8 +53,39 @@ const Tenders = () => {
     }
   };
 
+  const fetchHeader = async () => {
+    if (selectedWebsite === 'all') return;
+    try {
+      const res = await tenderHeaderApi.get(selectedWebsite);
+      if (res.data.success && res.data.data) {
+        setHeaderData({
+          title: res.data.data.title || '',
+          description: res.data.data.description || ''
+        });
+      }
+    } catch (error) {
+      console.error("Fetch Header Error:", error);
+    }
+  };
+
+  const handleHeaderSubmit = async (e) => {
+    e.preventDefault();
+    if (selectedWebsite === 'all') return;
+    try {
+      setIsSavingHeader(true);
+      setHeaderMessage({ type: '', text: '' });
+      await tenderHeaderApi.update(selectedWebsite, headerData);
+      setHeaderMessage({ type: 'success', text: 'Page Header updated successfully!' });
+    } catch (error) {
+      setHeaderMessage({ type: 'error', text: 'Failed to update Page Header.' });
+    } finally {
+      setIsSavingHeader(false);
+    }
+  };
+
   useEffect(() => {
     fetchTenders();
+    fetchHeader();
   }, [selectedWebsite]);
 
   const handleAdd = () => {
@@ -153,6 +188,71 @@ const Tenders = () => {
           </button>
         </div>
       </div>
+
+      {/* Page Header Editor */}
+      {selectedWebsite !== 'all' && (
+        <form onSubmit={handleHeaderSubmit} className="premium-card p-6 md:p-8 space-y-6 bg-white border border-slate-100">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+              <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">
+                Page Header Settings
+              </h3>
+              <p className="text-xs text-slate-400 font-medium">Modify the title and description shown on the user portal's Tenders & Contracts page.</p>
+            </div>
+          </div>
+
+          {headerMessage.text && (
+            <div className={`p-4 rounded-xl flex items-center gap-3 font-bold text-xs ${headerMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
+              {headerMessage.type === 'success' && <CheckCircleIcon className="w-4 h-4" />}
+              {headerMessage.text}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="col-span-1">
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+                Portal Header Title
+              </label>
+              <input
+                type="text"
+                value={headerData.title}
+                onChange={(e) => setHeaderData({ ...headerData, title: e.target.value })}
+                className="clean-input font-bold text-slate-900"
+                placeholder="e.g. TENDERS & CONTRACTS"
+                required
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+                Portal Header Description (Max 2 lines recommended)
+              </label>
+              <textarea
+                value={headerData.description}
+                onChange={(e) => setHeaderData({ ...headerData, description: e.target.value })}
+                className="clean-input font-bold text-slate-900 resize-none"
+                placeholder="Enter short description..."
+                rows={2}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end pt-4 border-t border-slate-100">
+            <button
+              type="submit"
+              disabled={isSavingHeader}
+              className="premium-btn-primary px-8 py-3 text-xs shadow-md disabled:opacity-70 flex items-center gap-2"
+            >
+              {isSavingHeader ? (
+                <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <CheckCircleIcon className="w-4 h-4" />
+              )}
+              <span>Save Header Settings</span>
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Tenders Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

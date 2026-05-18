@@ -156,6 +156,31 @@ export const blogHeaderApi = {
   update: (siteId, data) => api.put(`/blog-header/${siteId}`, data),
 };
 
+export const equotationHeaderApi = {
+  get: (siteId) => api.get(`/equotation-header/${siteId}`),
+  update: (siteId, data) => api.put(`/equotation-header/${siteId}`, data),
+};
+
+export const eauctionHeaderApi = {
+  get: (siteId) => api.get(`/eauction-header/${siteId}`),
+  update: (siteId, data) => api.put(`/eauction-header/${siteId}`, data),
+};
+
+export const tenderHeaderApi = {
+  get: (siteId) => api.get(`/tender-header/${siteId}`),
+  update: (siteId, data) => api.put(`/tender-header/${siteId}`, data),
+};
+
+export const careerHeaderApi = {
+  get: (siteId) => api.get(`/career-header/${siteId}`),
+  update: (siteId, data) => api.put(`/career-header/${siteId}`, data),
+};
+
+export const circularHeaderApi = {
+  get: (siteId) => api.get(`/circular-header/${siteId}`),
+  update: (siteId, data) => api.put(`/circular-header/${siteId}`, data),
+};
+
 export const noticeApi = {
   list: (siteId) => {
     let url = '/notices';
