@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   PlusIcon, PencilIcon, TrashIcon, 
   DocumentIcon, XMarkIcon, 
@@ -371,7 +372,7 @@ const Circulars = () => {
       </div>
 
       {/* Add/Edit Modal */}
-      {showModal && (
+      {showModal && createPortal(
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
@@ -487,7 +488,8 @@ const Circulars = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import {
   PlusIcon, TrashIcon, PhotoIcon, XMarkIcon, PencilIcon,
@@ -299,7 +300,7 @@ const Products = () => {
 
       </div>
 
-      {showModal && (
+      {showModal && createPortal(
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
@@ -428,11 +429,12 @@ const Products = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Preview Modal (Expert Snapshot) */}
-      {showPreviewModal && previewProduct && (
+      {showPreviewModal && previewProduct && createPortal(
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12">
           <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-xl animate-fade-in" onClick={() => setShowPreviewModal(false)} />
           
@@ -499,7 +501,8 @@ const Products = () => {
                </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

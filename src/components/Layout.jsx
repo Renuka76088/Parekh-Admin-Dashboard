@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { useState, useEffect } from 'react';
 import {
   HomeIcon, DocumentTextIcon, UserGroupIcon, CubeIcon,
@@ -380,7 +381,7 @@ const Layout = () => {
         </header>
 
         {/* Settings Modal */}
-        {showSettingsModal && (
+        {showSettingsModal && createPortal(
           <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
             {/* Enhanced Backdrop */}
             <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowSettingsModal(false)} />
@@ -434,7 +435,8 @@ const Layout = () => {
                 </button>
               </form>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
         <main className="flex-1 overflow-y-auto custom-scrollbar bg-[#f8fafc] px-6 py-8 lg:px-10 relative">
