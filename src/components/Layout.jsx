@@ -381,10 +381,11 @@ const Layout = () => {
 
         {/* Settings Modal */}
         {showSettingsModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowSettingsModal(false)} />
-            <div className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden animate-scale-in">
-              <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+          <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
+            {/* Enhanced Backdrop */}
+            <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowSettingsModal(false)} />
+            <div className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden flex flex-col animate-scale-in max-h-full">
+              <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between shrink-0">
                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Account Settings</h3>
                 <button onClick={() => setShowSettingsModal(false)} className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900">
                   <XMarkIcon className="h-5 w-5" />

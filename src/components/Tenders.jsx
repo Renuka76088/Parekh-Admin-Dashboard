@@ -335,10 +335,11 @@ const Tenders = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowModal(false)} />
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
+          {/* Enhanced Backdrop */}
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
           
-          <div className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl border border-white/20 flex flex-col animate-scale-in max-h-[95vh]">
+          <div className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 flex flex-col animate-scale-in max-h-full">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">

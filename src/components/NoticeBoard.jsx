@@ -201,10 +201,11 @@ const NoticeBoard = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowModal(false)} />
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
+          {/* Enhanced Backdrop */}
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
           
-          <div className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 flex flex-col animate-scale-in max-h-[90vh]">
+          <div className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 flex flex-col animate-scale-in max-h-full">
             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-xl font-black text-slate-900 tracking-tight">
