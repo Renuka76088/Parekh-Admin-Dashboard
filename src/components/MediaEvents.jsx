@@ -229,7 +229,7 @@ const MediaEvents = () => {
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
-          
+
           {/* Modal Container */}
           <div className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
@@ -239,8 +239,8 @@ const MediaEvents = () => {
                 </h3>
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Media Event Configuration</p>
               </div>
-              <button 
-                onClick={() => setShowModal(false)} 
+              <button
+                onClick={() => setShowModal(false)}
                 className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all shadow-sm"
               >
                 <XMarkIcon className="w-6 h-6" />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { 
-  PlusIcon, PencilIcon, TrashIcon, KeyIcon, 
+import {
+  PlusIcon, PencilIcon, TrashIcon, KeyIcon,
   XMarkIcon, UserIcon, IdentificationIcon,
   ExclamationCircleIcon, EyeIcon, EyeSlashIcon
 } from '@heroicons/react/24/outline';
@@ -79,7 +79,7 @@ const Authorities = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Expert Validation
     const newErrors = {
       name: !formData.name,
@@ -119,26 +119,26 @@ const Authorities = () => {
           </div>
 
           <button onClick={handleAdd} className="premium-btn-primary gap-2">
-              <PlusIcon className="h-5 w-5" />
-              Provision Personnel
+            <PlusIcon className="h-5 w-5" />
+            Provision Personnel
           </button>
         </div>
 
         {/* Grid Layout (Expert Style) */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {loading ? (
-               <div className="col-span-full py-24 text-center">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
-                  <p className="text-sm font-bold text-slate-500 mt-4">Consulting Security Protocol...</p>
-              </div>
+            <div className="col-span-full py-24 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+              <p className="text-sm font-bold text-slate-500 mt-4">Consulting Security Protocol...</p>
+            </div>
           ) : authorities.length === 0 ? (
-              <div className="col-span-full py-20 text-center">
-                  <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
-                      <IdentificationIcon className="w-10 h-10 text-slate-200" />
-                  </div>
-                  <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Zero Personnel Records</h4>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">No authorization profiles exist yet.</p>
+            <div className="col-span-full py-20 text-center">
+              <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
+                <IdentificationIcon className="w-10 h-10 text-slate-200" />
               </div>
+              <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Zero Personnel Records</h4>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">No authorization profiles exist yet.</p>
+            </div>
           ) : (
             authorities.map((auth) => (
               <div key={auth._id} className="premium-card p-8 group relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-100/50">
@@ -146,16 +146,16 @@ const Authorities = () => {
                   <div className="h-14 w-14 flex items-center justify-center rounded-[1.25rem] bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
                     <UserIcon className="h-7 w-7" />
                   </div>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                    <button 
-                      onClick={() => handleEdit(auth)} 
+                  <div className="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-y-0 md:translate-y-2 md:group-hover:translate-y-0">
+                    <button
+                      onClick={() => handleEdit(auth)}
                       className="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:shadow-lg transition-all"
                       title="Edit Profile"
                     >
                       <PencilIcon className="w-4 h-4" />
                     </button>
-                    <button 
-                      onClick={() => handleDelete(auth._id)} 
+                    <button
+                      onClick={() => handleDelete(auth._id)}
                       className="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:shadow-lg transition-all"
                       title="Revoke Access"
                     >
@@ -163,7 +163,7 @@ const Authorities = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="space-y-1 mb-8">
                   <h5 className="text-xl font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
                     {auth.name}
@@ -175,7 +175,7 @@ const Authorities = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="relative">
                   <div className="absolute inset-0 bg-indigo-600/5 blur-xl rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div className="relative flex items-center justify-between p-5 bg-slate-50 border border-slate-100 rounded-2xl transition-all duration-300 group-hover:bg-white group-hover:border-indigo-100">
@@ -190,8 +190,8 @@ const Authorities = () => {
                         </span>
                       </div>
                     </div>
-                    <button 
-                      onClick={() => toggleCodeVisibility(auth._id)} 
+                    <button
+                      onClick={() => toggleCodeVisibility(auth._id)}
                       className="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:shadow-md transition-all active:scale-95 shadow-sm"
                       title={visibleCodes[auth._id] ? "Hide Code" : "View Code"}
                     >
@@ -210,13 +210,13 @@ const Authorities = () => {
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
-          
+
           {/* Modal Container */}
           <div className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                    {editingAuthority ? 'Update Security' : 'New Security Init'}
+                  {editingAuthority ? 'Update Security' : 'New Security Init'}
                 </h3>
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Authorized Person Profile</p>
               </div>
@@ -228,38 +228,38 @@ const Authorities = () => {
             <form onSubmit={handleSubmit} className="p-10 space-y-8">
               <div className="space-y-6">
                 <div>
-                    <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.name ? 'text-rose-500' : 'text-slate-500'}`}>
-                        Personnel Legal Name {errors.name && '— Required'}
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`clean-input font-bold text-slate-900 ${errors.name ? 'error' : ''}`}
-                      placeholder="e.g. Rahul Sharma"
-                    />
+                  <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.name ? 'text-rose-500' : 'text-slate-500'}`}>
+                    Personnel Legal Name {errors.name && '— Required'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className={`clean-input font-bold text-slate-900 ${errors.name ? 'error' : ''}`}
+                    placeholder="e.g. Rahul Sharma"
+                  />
                 </div>
 
                 <div>
-                    <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.code ? 'text-rose-500' : 'text-slate-500'}`}>
-                        Access Code {errors.code && '— Min 4 Chars Needed'}
-                    </label>
-                    <div className="relative group">
-                        <input
-                          type={showPasswordInModal ? 'text' : 'password'}
-                          value={formData.code}
-                          onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                          className={`clean-input font-bold text-slate-900 pr-12 tracking-widest shadow-sm ${errors.code ? 'error' : ''}`}
-                          placeholder="Unique ID"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPasswordInModal(!showPasswordInModal)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-lg text-slate-300 hover:text-indigo-600 hover:bg-slate-50 transition-all"
-                        >
-                          {showPasswordInModal ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                        </button>
-                    </div>
+                  <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.code ? 'text-rose-500' : 'text-slate-500'}`}>
+                    Access Code {errors.code && '— Min 4 Chars Needed'}
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type={showPasswordInModal ? 'text' : 'password'}
+                      value={formData.code}
+                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                      className={`clean-input font-bold text-slate-900 pr-12 tracking-widest shadow-sm ${errors.code ? 'error' : ''}`}
+                      placeholder="Unique ID"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswordInModal(!showPasswordInModal)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-lg text-slate-300 hover:text-indigo-600 hover:bg-slate-50 transition-all"
+                    >
+                      {showPasswordInModal ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                    </button>
+                  </div>
                 </div>
               </div>
 

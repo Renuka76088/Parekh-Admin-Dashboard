@@ -164,7 +164,7 @@ const ChamberServices = () => {
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
-          <div className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
+          <div className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-[90vh]">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -172,12 +172,12 @@ const ChamberServices = () => {
                 </h3>
                 <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Icon & Title Configuration</p>
               </div>
-              <button onClick={() => setShowModal(false)} className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-all">
+              <button onClick={() => setShowModal(false)} className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all">
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-10 space-y-8">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar min-h-0">
               <div>
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-3 mb-2">Service Title</label>
                 <textarea
@@ -212,15 +212,18 @@ const ChamberServices = () => {
                   })}
                 </div>
               </div>
+            </form>
 
+            <div className="p-10 border-t border-slate-100 bg-slate-50/50 shrink-0">
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 disabled={isSubmitting}
                 className="w-full premium-btn-primary py-5 text-lg shadow-xl shadow-indigo-100 disabled:opacity-70"
               >
                 {isSubmitting ? 'Processing...' : editingService ? 'Update Service' : 'Confirm Service Addition'}
               </button>
-            </form>
+            </div>
           </div>
         </div>,
         document.body

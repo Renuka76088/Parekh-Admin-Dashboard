@@ -163,159 +163,159 @@ const Careers = () => {
             <p className="mt-1 text-slate-500 font-medium">Engineer and manage recruitment opportunities across the ecosystem.</p>
           </div>
 
-        <div className="flex items-center gap-4">
-          {user.siteId === 'all' && (
-            <div className="relative group min-w-[200px]">
-              <select
-                value={selectedWebsite}
-                onChange={(e) => setSelectedWebsite(e.target.value)}
-                className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
-              >
-                {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
-              </select>
-              <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
-            </div>
-          )}
-          <button onClick={handleAdd} className="premium-btn-primary gap-2">
-            <PlusIcon className="h-5 w-5" />
-            Post Vacancy
-          </button>
-        </div>
-
-      </div>
-
-      {/* Page Header Editor */}
-      {selectedWebsite !== 'all' && (
-        <form onSubmit={handleHeaderSubmit} className="premium-card p-6 md:p-8 space-y-6 bg-white border border-slate-100">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-              <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">
-                Page Header Settings
-              </h3>
-              <p className="text-xs text-slate-400 font-medium">Modify the title and description shown on the user portal's Careers page.</p>
-            </div>
-          </div>
-
-          {headerMessage.text && (
-            <div className={`p-4 rounded-xl flex items-center gap-3 font-bold text-xs ${headerMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
-              {headerMessage.type === 'success' && <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[8px]">✓</div>}
-              {headerMessage.text}
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="col-span-1">
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
-                Portal Header Title
-              </label>
-              <input
-                type="text"
-                value={headerData.title}
-                onChange={(e) => setHeaderData({ ...headerData, title: e.target.value })}
-                className="clean-input font-bold text-slate-900"
-                placeholder="e.g. CAREERS & OPPORTUNITIES"
-                required
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
-                Portal Header Description (Max 2 lines recommended)
-              </label>
-              <textarea
-                value={headerData.description}
-                onChange={(e) => setHeaderData({ ...headerData, description: e.target.value })}
-                className="clean-input font-bold text-slate-900 resize-none"
-                placeholder="Enter short description..."
-                rows={2}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end pt-4 border-t border-slate-100">
-            <button
-              type="submit"
-              disabled={isSavingHeader}
-              className="premium-btn-primary px-8 py-3 text-xs shadow-md disabled:opacity-70 flex items-center gap-2"
-            >
-              {isSavingHeader && (
-                <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              )}
-              <span>Save Header Settings</span>
+          <div className="flex items-center gap-4">
+            {user.siteId === 'all' && (
+              <div className="relative group min-w-[200px]">
+                <select
+                  value={selectedWebsite}
+                  onChange={(e) => setSelectedWebsite(e.target.value)}
+                  className="clean-input pr-10 appearance-none font-bold text-slate-900 cursor-pointer shadow-sm bg-white"
+                >
+                  {websites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
+                </select>
+                <ChevronDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none group-hover:text-indigo-600 transition-colors" />
+              </div>
+            )}
+            <button onClick={handleAdd} className="premium-btn-primary gap-2">
+              <PlusIcon className="h-5 w-5" />
+              Post Vacancy
             </button>
           </div>
-        </form>
-      )}
 
-      {/* Career Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {loading ? (
-          <div className="col-span-full py-24 text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
-            <p className="text-sm font-bold text-slate-500 mt-4">Consulting Personnel Database...</p>
-          </div>
-        ) : careers.length === 0 ? (
-          <div className="col-span-full py-20 text-center">
-            <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
-              <BriefcaseIcon className="w-10 h-10 text-slate-200" />
-            </div>
-            <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Zero Vacancy Profiles</h4>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Ready to hire? Create a new listing.</p>
-          </div>
-        ) : (
-          careers.map((job) => (
-            <div key={job._id} className="premium-card p-10 group relative transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-100/50 flex flex-col h-full bg-gradient-to-br from-white to-slate-50/30">
-              <div className="flex justify-between items-start mb-8">
-                <div>
-                  <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md uppercase tracking-widest mb-2 block w-fit">
-                    {job.siteId?.replace('Parekh', '') || 'Corporate'}
-                  </span>
-                  <h4 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors leading-tight">
-                    {job.title}
-                  </h4>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => handleEdit(job)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-indigo-100">
-                    <PencilIcon className="w-5 h-5" />
-                  </button>
-                  <button onClick={() => handleDelete(job._id)} className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-rose-100">
-                    <TrashIcon className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+        </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-8 flex-1">
-                <div className="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-slate-100 group-hover:border-indigo-100 transition-colors shadow-sm">
-                  <div className="p-2 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
-                    <MapPinIcon className="h-4 w-4" />
-                  </div>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">{job.location}</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-slate-100 group-hover:border-indigo-100 transition-colors shadow-sm">
-                  <div className="p-2 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
-                    <CurrencyDollarIcon className="h-4 w-4" />
-                  </div>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">{job.salary || 'Competitive'}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-8 border-t border-slate-100/60">
-                <a 
-                  href={`mailto:${job.contactEmail || job.email}`}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200/50 shadow-inner hover:bg-slate-200 transition-colors"
-                >
-                  <EnvelopeIcon className="h-3.5 w-3.5 text-slate-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{job.contactEmail || job.email}</span>
-                </a>
-                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${job.status === 'active' || job.status === 'Open' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
-                  }`}>
-                  {job.status}
-                </span>
+        {/* Page Header Editor */}
+        {selectedWebsite !== 'all' && (
+          <form onSubmit={handleHeaderSubmit} className="premium-card p-6 md:p-8 space-y-6 bg-white border border-slate-100">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">
+                  Page Header Settings
+                </h3>
+                <p className="text-xs text-slate-400 font-medium">Modify the title and description shown on the user portal's Careers page.</p>
               </div>
             </div>
-          ))
+
+            {headerMessage.text && (
+              <div className={`p-4 rounded-xl flex items-center gap-3 font-bold text-xs ${headerMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
+                {headerMessage.type === 'success' && <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[8px]">✓</div>}
+                {headerMessage.text}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="col-span-1">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+                  Portal Header Title
+                </label>
+                <input
+                  type="text"
+                  value={headerData.title}
+                  onChange={(e) => setHeaderData({ ...headerData, title: e.target.value })}
+                  className="clean-input font-bold text-slate-900"
+                  placeholder="e.g. CAREERS & OPPORTUNITIES"
+                  required
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
+                  Portal Header Description (Max 2 lines recommended)
+                </label>
+                <textarea
+                  value={headerData.description}
+                  onChange={(e) => setHeaderData({ ...headerData, description: e.target.value })}
+                  className="clean-input font-bold text-slate-900 resize-none"
+                  placeholder="Enter short description..."
+                  rows={2}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end pt-4 border-t border-slate-100">
+              <button
+                type="submit"
+                disabled={isSavingHeader}
+                className="premium-btn-primary px-8 py-3 text-xs shadow-md disabled:opacity-70 flex items-center gap-2"
+              >
+                {isSavingHeader && (
+                  <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                )}
+                <span>Save Header Settings</span>
+              </button>
+            </div>
+          </form>
         )}
-      </div>
+
+        {/* Career Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {loading ? (
+            <div className="col-span-full py-24 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+              <p className="text-sm font-bold text-slate-500 mt-4">Consulting Personnel Database...</p>
+            </div>
+          ) : careers.length === 0 ? (
+            <div className="col-span-full py-20 text-center">
+              <div className="bg-slate-50 p-6 rounded-[2.5rem] inline-block border border-slate-100">
+                <BriefcaseIcon className="w-10 h-10 text-slate-200" />
+              </div>
+              <h4 className="text-lg font-black text-slate-900 mt-4 tracking-tight">Zero Vacancy Profiles</h4>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Ready to hire? Create a new listing.</p>
+            </div>
+          ) : (
+            careers.map((job) => (
+              <div key={job._id} className="premium-card p-10 group relative transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-100/50 flex flex-col h-full bg-gradient-to-br from-white to-slate-50/30">
+                <div className="flex justify-between items-start mb-8">
+                  <div>
+                    <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md uppercase tracking-widest mb-2 block w-fit">
+                      {job.siteId?.replace('Parekh', '') || 'Corporate'}
+                    </span>
+                    <h4 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors leading-tight">
+                      {job.title}
+                    </h4>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => handleEdit(job)} className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-indigo-100">
+                      <PencilIcon className="w-5 h-5" />
+                    </button>
+                    <button onClick={() => handleDelete(job._id)} className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl shadow-sm transition-all border border-slate-100 hover:border-rose-100">
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-8 flex-1">
+                  <div className="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-slate-100 group-hover:border-indigo-100 transition-colors shadow-sm">
+                    <div className="p-2 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
+                      <MapPinIcon className="h-4 w-4" />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">{job.location}</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-slate-100 group-hover:border-indigo-100 transition-colors shadow-sm">
+                    <div className="p-2 bg-slate-50 rounded-xl text-slate-400 group-hover:text-indigo-500 transition-colors">
+                      <CurrencyDollarIcon className="h-4 w-4" />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">{job.salary || 'Competitive'}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-8 border-t border-slate-100/60">
+                  <a
+                    href={`mailto:${job.contactEmail || job.email}`}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200/50 shadow-inner hover:bg-slate-200 transition-colors"
+                  >
+                    <EnvelopeIcon className="h-3.5 w-3.5 text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{job.contactEmail || job.email}</span>
+                  </a>
+                  <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${job.status === 'active' || job.status === 'Open' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
+                    }`}>
+                    {job.status}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
 
       </div>
 
@@ -323,7 +323,7 @@ const Careers = () => {
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 md:p-8 lg:p-12">
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
-          
+
           {/* Modal Container */}
           <div className="relative w-full max-w-3xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">

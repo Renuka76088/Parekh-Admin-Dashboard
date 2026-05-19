@@ -41,16 +41,16 @@ const Management = () => {
 
   const fetchData = async () => {
     if (selectedWebsite === 'all') return;
-    
+
     try {
       setContentLoading(true);
       setMembersLoading(true);
-      
+
       const [contentRes, membersRes] = await Promise.all([
         managementApi.getContent(selectedWebsite),
         managementApi.getMembers(selectedWebsite)
       ]);
-      
+
       if (contentRes.data.success && contentRes.data.data) {
         setContent(contentRes.data.data);
       }
@@ -136,7 +136,7 @@ const Management = () => {
       } else {
         await managementApi.addMember(data);
       }
-      
+
       setShowMemberModal(false);
       fetchData();
     } catch (error) {
@@ -179,7 +179,7 @@ const Management = () => {
             </div>
             <h3 className="text-xl font-black text-slate-900 tracking-tight">Page Branding</h3>
           </div>
-          <button 
+          <button
             onClick={handleContentSave}
             disabled={contentSaving}
             className="premium-btn-primary gap-2 h-12 px-6"
@@ -239,7 +239,7 @@ const Management = () => {
 
         {membersLoading ? (
           <div className="py-20 text-center">
-             <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
           </div>
         ) : members.length === 0 ? (
           <div className="premium-card py-20 text-center border-dashed">
@@ -258,7 +258,7 @@ const Management = () => {
                   <div className="flex-1 min-w-0">
                     <h4 className="font-black text-slate-900 truncate">{member.name}</h4>
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mt-1">{member.role}</p>
-                    <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-2 mt-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button onClick={() => handleEditMember(member)} className="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors">
                         <PencilIcon className="h-4 w-4" />
                       </button>
