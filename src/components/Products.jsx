@@ -266,7 +266,7 @@ const Products = () => {
                         </span>
                       </td>
                       <td className="px-8 py-4 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-2 transition-opacity">
                           <button
                             onClick={() => handlePreview(prod)}
                             className="p-2.5 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-xl transition-all shadow-sm border border-emerald-50"

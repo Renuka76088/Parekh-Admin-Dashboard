@@ -412,7 +412,7 @@ const EAuction = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <h4 className="font-black text-slate-900 truncate uppercase tracking-tight">{auction.title}</h4>
-                    <div className="flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-2 transition-opacity">
                       <button
                         onClick={() => handleEdit(auction)}
                         className="p-2 hover:bg-indigo-50 rounded-lg text-indigo-600 transition-colors"

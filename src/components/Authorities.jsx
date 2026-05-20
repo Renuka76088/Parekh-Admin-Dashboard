@@ -146,7 +146,7 @@ const Authorities = () => {
                   <div className="h-14 w-14 flex items-center justify-center rounded-[1.25rem] bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
                     <UserIcon className="h-7 w-7" />
                   </div>
-                  <div className="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-y-0 md:translate-y-2 md:group-hover:translate-y-0">
+                  <div className="flex gap-1 transition-all duration-300 transform translate-y-0">
                     <button
                       onClick={() => handleEdit(auth)}
                       className="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:shadow-lg transition-all"

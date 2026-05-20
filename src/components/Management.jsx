@@ -258,7 +258,7 @@ const Management = () => {
                   <div className="flex-1 min-w-0">
                     <h4 className="font-black text-slate-900 truncate">{member.name}</h4>
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mt-1">{member.role}</p>
-                    <div className="flex gap-2 mt-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-2 mt-3 transition-opacity">
                       <button onClick={() => handleEditMember(member)} className="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors">
                         <PencilIcon className="h-4 w-4" />
                       </button>
