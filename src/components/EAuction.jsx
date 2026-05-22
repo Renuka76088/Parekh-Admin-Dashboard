@@ -235,14 +235,14 @@ const EAuction = () => {
           </div>
           <div className="col-span-2">
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3 mb-2">
-              Portal Header Description (Max 2 lines recommended)
+              Portal Header Description
             </label>
             <textarea
               value={headerData.description}
               onChange={(e) => setHeaderData({ ...headerData, description: e.target.value })}
               className="clean-input font-bold text-slate-900 resize-none"
               placeholder="Enter short description..."
-              rows={2}
+              rows={5}
               required
             />
           </div>

@@ -206,8 +206,8 @@ const NoticeBoard = () => {
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
           
-          <div className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 flex flex-col animate-scale-in max-h-full">
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between shrink-0">
+          <div className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 flex flex-col animate-scale-in max-h-[90vh]">
+            <div className="p-4 sm:p-6 md:px-8 md:py-6 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-xl font-black text-slate-900 tracking-tight">
                   {editingNotice ? 'Edit Announcement' : 'Post New Notice'}
@@ -219,7 +219,7 @@ const NoticeBoard = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto custom-scrollbar">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 min-h-0 space-y-6 custom-scrollbar">
               <div>
                 <label className={`block text-[10px] font-black uppercase tracking-widest ml-3 mb-2 ${errors.title ? 'text-rose-500' : 'text-slate-500'}`}>
                   Notice Heading {errors.title && '— Required'}

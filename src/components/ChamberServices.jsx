@@ -165,7 +165,7 @@ const ChamberServices = () => {
           {/* Enhanced Backdrop */}
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
           <div className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-[90vh]">
-            <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between shrink-0">
+            <div className="p-4 sm:p-6 md:px-10 md:py-8 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
                   {editingService ? 'Edit Service' : 'New Chamber Service'}
@@ -177,7 +177,7 @@ const ChamberServices = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar min-h-0">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 min-h-0 space-y-8 custom-scrollbar min-h-0">
               <div>
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-3 mb-2">Service Title</label>
                 <textarea

@@ -274,7 +274,7 @@ const Blogs = () => {
                   <textarea
                     value={blogHeader.description}
                     onChange={(e) => setBlogHeader({ ...blogHeader, description: e.target.value })}
-                    className="w-full bg-slate-50/50 border-slate-100 text-slate-900 font-bold p-6 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all placeholder:text-slate-300 shadow-sm h-32 resize-none leading-relaxed"
+                    className="w-full bg-slate-50/50 border-slate-100 text-slate-900 font-bold p-6 rounded-2xl focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all placeholder:text-slate-300 shadow-sm h-48 resize-none leading-relaxed"
                     placeholder="Enter the section's core message or quote..."
                   />
                 </div>
@@ -290,7 +290,7 @@ const Blogs = () => {
                   />
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2">Professional Title</label>
                   <input
                     type="text"
@@ -406,8 +406,8 @@ const Blogs = () => {
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)} />
           
           {/* Modal Container */}
-          <div className="relative w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-full">
-            <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
+          <div className="relative w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden flex flex-col animate-scale-in max-h-[90vh]">
+            <div className="p-4 sm:p-6 md:px-10 md:py-8 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">
                   {editingBlog ? 'Refine Publication' : 'Initialize Insight'}
@@ -419,7 +419,7 @@ const Blogs = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 min-h-0 space-y-10 custom-scrollbar">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 <div className="space-y-8">
                   <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem] p-4 bg-slate-50 hover:border-indigo-400 transition-colors cursor-pointer group">
